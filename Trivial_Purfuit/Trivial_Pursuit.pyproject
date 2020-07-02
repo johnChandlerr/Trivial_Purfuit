@@ -1,0 +1,7 @@
+{
+    "files": ["mainwindow.py",
+              "ui_mainwindow.py",
+              "ui_start_menu.py",
+              "mainwindow.ui",
+              "start_menu.ui"]
+}
