@@ -28,6 +28,15 @@ deactivate
 source venv/bin/activate
 ```
 
+### Updating requirements.txt
+When you need new dependencies and have run `pip install <package-name>`, please run:
+
+```shell script
+pip freeze > requirements.txt
+```
+
+to ensure that the dependencies are saved and others are able to get the right dependencies.
+
 ## Q/A Database
 To Run the unit test class, from the project's root directory:
 
