@@ -131,3 +131,6 @@ dmypy.json
 
 # Intellij IDE
 .idea
+
+# Temporary files
+*.swp
