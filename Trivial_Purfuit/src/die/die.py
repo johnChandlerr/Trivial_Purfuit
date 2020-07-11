@@ -8,11 +8,3 @@ class Die:
     def roll(self):
         return 1 + random.randrange(self.sides)
 
-
-def main():
-    d1 = Die()
-    for n in range(100):
-        print(d1.roll())
-
-
-main()
