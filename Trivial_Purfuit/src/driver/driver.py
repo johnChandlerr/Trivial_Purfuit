@@ -12,10 +12,12 @@ from Trivial_Purfuit.src.qa_database.question_manager import QuestionManager
 
 
 def die_driver():
+    print("--------------")
     print("\tRoll the Die")
     die = Die()
     num = die.roll()
     print("Die number: {}".format(num))
+
 
 # get question and check answer
 def get_question(question_manager, question_type):
@@ -36,6 +38,7 @@ def qa_database_driver():
     # Get correct data type
     running = True
     while running:
+        print("--------------")
         print("=> Get Correct question type")
         print("\t1: people")
         print("\t2: event")
@@ -56,49 +59,64 @@ def qa_database_driver():
         else:
             print("\tSorry, \"{}\" is not valid. Please try again.".format(user_input))
 
-    # check user input answer
-    print("\n=> Check player answer")
-    question_type = "Driver Question"
-    question = question_manager.get_question(question_type)
-    wrong_answer = "Wrong User Input Answer"
-    correct_answer = "driver answer"
-    wrong_result = question_manager.check_answer(question, wrong_answer)
-    correct_result = question_manager.check_answer(question, correct_answer)
-    print("Player answer incorrect -> Result:{}".format(wrong_result))
-    print("Player answer correct  -> Result:{}".format(correct_result))
+
+def show_token_status(token):
+    print("Player token: " + token.name)
+    for k, v in token.cake_list.items():
+        print("Cake:{} Awarded:{}".format(k, v))
+
+
+def award_cake_piece(token, cake_category):
+    # hard code for awarded cake piece
+    token.award_cake_piece(cake_category)
 
 
 def player_token_driver():
     print("\n\tPlayer Token")
-    token = PlayerToken('Player1')
-    # check a cake piece has been given
-    cake_category = 'people'
-    result = token.check_cake_piece(cake_category)
-    print("=>Collect cake pieces")
-    print("Token:{} includes Cake Type:{} ->Result: {}".format(token.name, cake_category, result))
-    print("\n=>Award cake pieces")
-    # check award a cake piece
-    token.award_cake_piece(cake_category)
-    print("Token:{} award Cake Type:{}".format(token.name, cake_category))
-    result = token.check_cake_piece(cake_category)
-    print("Token:{} includes Cake Type:{} ->Result: {}".format(token.name, cake_category, result))
+    player_name = input("Player name: ")
+    token = PlayerToken(player_name)
+    running = True
+    while running:
+        print("--------------")
+        print("=> Player Token")
+        print("\t1: Show Token Status")
+        print("\t2: Award <people> cake piece")
+        print("\t3: Award <event> cake piece")
+        print("\t4: Award <place> cake piece")
+        print("\t5: Award <holiday> cake piece")
+        print("\t0: === Go Back ===")
+        user_input = input("Please select: ")
+        if user_input == '1':
+            show_token_status(token)
+        elif user_input == '2':
+            award_cake_piece(token, "people")
+        elif user_input == '3':
+            award_cake_piece(token, "event")
+        elif user_input == '4':
+            award_cake_piece(token, "place")
+        elif user_input == '5':
+            award_cake_piece(token, "holiday")
+        elif user_input == '0':
+            running = False
+        else:
+            print("\tSorry, \"{}\" is not valid. Please try again.".format(user_input))
 
 
 def board_funcs_driver():
     print("\n\tBoard Function")
-    token = PlayerToken('Player1')
-    board_function = board_funcs()
+    # token = PlayerToken('Player1')
+    # board_function = board_funcs()
     # Ask question and collect cake
     print("\n=>Ask question")
-    q_type = 'date'
-    title_type = 'cake'
-    board_function.ask_question(token, q_type, title_type)
+    # q_type = 'date'
+    # title_type = 'cake'
+    # board_function.ask_question(token, q_type, title_type)
     print("\n=>Player Tile Land")
     # board_function.tileLand(token)
     print("\n=>Player round order")
     # board_function.set_round_order()
     print("\n=>Player move")
-    board_function.move()
+    # board_function.move()
 
 
 def main():
