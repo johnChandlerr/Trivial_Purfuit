@@ -2,6 +2,10 @@
     "files": ["mainwindow.py",
               "ui_mainwindow.py",
               "ui_start_menu.py",
+              "start_menu_wrapper.py",
               "mainwindow.ui",
-              "start_menu.ui"]
+              "start_menu.ui",
+              "player_token.py",
+              "the_board.py"
+              ]
 }
