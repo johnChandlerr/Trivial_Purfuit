@@ -136,9 +136,10 @@ class Board(QMainWindow, board_funcs.board_funcs):
         if ((row == 0 and col == 0) or (row == 0 and col == 8) or
             (row == 8 and col == 0) or (row == 8 and col == 8)):
             return True
+        # end if
     # end isRollAgainTile()
 
-    def isPersonTile(self, row, col):
+    def is_person_tile(self, row, col):
         """
          Description
         -------------
@@ -155,9 +156,10 @@ class Board(QMainWindow, board_funcs.board_funcs):
             (row == 5 and col == 0) or (row == 7 and col == 4) or
             (row == 8 and col == 1) or (row == 8 and col == 7)):
             return True
+        # end if
     # end isPersonTile()
 
-    def isEventTile(self, row, col):
+    def is_event_tile(self, row, col):
         """
          Description
         -------------
@@ -175,9 +177,10 @@ class Board(QMainWindow, board_funcs.board_funcs):
             (row == 7 and col == 0) or (row == 7 and col == 8) or
             (row == 8 and col == 4)):
             return True
+        # end if
     # end isEventTile()
 
-    def isPlaceTile(self, row, col):
+    def is_place_tile(self, row, col):
         """
          Description
         -------------
@@ -195,9 +198,10 @@ class Board(QMainWindow, board_funcs.board_funcs):
             (row == 6 and col == 8) or
             (row == 8 and col == 2) or (row == 8 and col == 5)):
             return True
+        # end if
     # end isPlaceTile()
 
-    def isHolidayTile(self, row, col):
+    def is_holiday_tile(self, row, col):
         """
          Description
         -------------
@@ -214,6 +218,7 @@ class Board(QMainWindow, board_funcs.board_funcs):
             (row == 5 and col == 4) or (row == 5 and col == 8) or
             (row == 8 and col == 3) or (row == 8 and col == 6)):
             return True
+        # end if
     # end isHolidayTile()
 
     def paintEvent(self, event):
@@ -231,12 +236,14 @@ class Board(QMainWindow, board_funcs.board_funcs):
         if not self.players_initialized:
             self.player_widget.update()
             self.players_initialized = True
+        # end if
 
         if self.move_player:
             self.player_widget.dice_amount = int(self.dice_amount)
             self.player_widget.draw_token = True
             self.player_widget.update()
             self.move_player = False
+        # end if
     # end paintEvent()
 
 
@@ -255,8 +262,8 @@ class Board(QMainWindow, board_funcs.board_funcs):
          (1) Don't be lazy and brute force..
          (2) Run the current board layout by the team
         """
-        tmp_painter = QPainter(self)
-        tmp_painter.setPen(QPen(Qt.black, 5, Qt.SolidLine))
+        painter = QPainter(self)
+        painter.setPen(QPen(Qt.black, 5, Qt.SolidLine))
 
         x = 0
         y = 0
@@ -266,24 +273,25 @@ class Board(QMainWindow, board_funcs.board_funcs):
             for col in range(self.num_col_tiles):
 
                 if self.is_roll_again_tile(row, col):
-                    tmp_painter.setBrush(QBrush(self.roll_again_tile_color, Qt.SolidPattern))
-                    tmp_painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                    painter.setBrush(QBrush(self.roll_again_tile_color, Qt.SolidPattern))
+                    painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
 
-                elif self.isPersonTile(row, col):
-                    tmp_painter.setBrush(QBrush(self.person_tile_color, Qt.SolidPattern))
-                    tmp_painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                elif self.is_person_tile(row, col):
+                    painter.setBrush(QBrush(self.person_tile_color, Qt.SolidPattern))
+                    painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
 
-                elif self.isHolidayTile(row, col):
-                    tmp_painter.setBrush(QBrush(self.holiday_tile_color, Qt.SolidPattern))
-                    tmp_painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                elif self.is_holiday_tile(row, col):
+                    painter.setBrush(QBrush(self.holiday_tile_color, Qt.SolidPattern))
+                    painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
 
-                elif self.isEventTile(row, col):
-                    tmp_painter.setBrush(QBrush(self.events_tile_color, Qt.SolidPattern))
-                    tmp_painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                elif self.is_event_tile(row, col):
+                    painter.setBrush(QBrush(self.events_tile_color, Qt.SolidPattern))
+                    painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
 
-                elif self.isPlaceTile(row, col):
-                    tmp_painter.setBrush(QBrush(self.places_tile_color, Qt.SolidPattern))
-                    tmp_painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                elif self.is_place_tile(row, col):
+                    painter.setBrush(QBrush(self.places_tile_color, Qt.SolidPattern))
+                    painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                # end if
 
                 # TODO: Add image for the center tile and HQ tiles
                 '''
@@ -293,12 +301,14 @@ class Board(QMainWindow, board_funcs.board_funcs):
                 '''
                 # Update to x-coordinate for next tile
                 x = x + self.board_tile_width
+            # end for
 
             # Reset (x,y) starting coordinates for next row and columns
             y = y + self.board_tile_height
             x = 0
+
+        # end for
         self.board_initialized = True
-        tmp_painter.end()
     # end draw_board()
 
 
