@@ -7,10 +7,13 @@ from PySide2.QtWidgets import (QPushButton, QTextEdit)
 from PySide2.QtGui import (QPainter, QPen, QBrush)
 from PySide2.QtCore import (Qt, SIGNAL)
 
+
 from Trivial_Purfuit.src.board import board_funcs
+
 from Trivial_Purfuit.src.player_token import player_token
 
 from functools import partial
+
 
 class Board(QMainWindow, board_funcs.board_funcs):
     """
@@ -69,7 +72,7 @@ class Board(QMainWindow, board_funcs.board_funcs):
         self.connect(left_button, SIGNAL("clicked()"), partial(self.get_direction, "LEFT"))
         self.connect(right_button, SIGNAL("clicked()"), partial(self.get_direction, "RIGHT"))
 
-        get_dice_amount_button = QPushButton("Get Dice!", self)
+        get_dice_amount_button = QPushButton("Move Player", self)
         get_dice_amount_button.move(self.board_width, monitor.height() / 3)
         get_dice_amount_button.clicked.connect(self.get_dice_amount)
         get_dice_amount_button.show()
@@ -85,6 +88,7 @@ class Board(QMainWindow, board_funcs.board_funcs):
         self.dice_text_field.show()
 
         self.initialize_player_tokens()
+        self.layout().addChildWidget(self.player_widget)
     # end temp_setup()
 
 
@@ -102,9 +106,7 @@ class Board(QMainWindow, board_funcs.board_funcs):
         self.player_widget = player_token.PlayerToken("John")
         self.player_widget.board_tile_height = self.board_tile_height
         self.player_widget.board_tile_width  = self.board_tile_width
-        # TODO: Look into warning message, "QMainWindowLayout::addItem: Please use the public QMainWindow API instead"
-        #       that is displayed due to the following line.
-        self.layout().addWidget(self.player_widget)
+        self.player_widget.resize(self.board_width, self.board_height)
     # end initialize_player_tokens()
 
     def reset_player(self):
@@ -136,9 +138,10 @@ class Board(QMainWindow, board_funcs.board_funcs):
         if ((row == 0 and col == 0) or (row == 0 and col == 8) or
             (row == 8 and col == 0) or (row == 8 and col == 8)):
             return True
+        # end if
     # end isRollAgainTile()
 
-    def isPersonTile(self, row, col):
+    def is_person_tile(self, row, col):
         """
          Description
         -------------
@@ -155,9 +158,10 @@ class Board(QMainWindow, board_funcs.board_funcs):
             (row == 5 and col == 0) or (row == 7 and col == 4) or
             (row == 8 and col == 1) or (row == 8 and col == 7)):
             return True
+        # end if
     # end isPersonTile()
 
-    def isEventTile(self, row, col):
+    def is_event_tile(self, row, col):
         """
          Description
         -------------
@@ -175,9 +179,10 @@ class Board(QMainWindow, board_funcs.board_funcs):
             (row == 7 and col == 0) or (row == 7 and col == 8) or
             (row == 8 and col == 4)):
             return True
+        # end if
     # end isEventTile()
 
-    def isPlaceTile(self, row, col):
+    def is_place_tile(self, row, col):
         """
          Description
         -------------
@@ -195,9 +200,10 @@ class Board(QMainWindow, board_funcs.board_funcs):
             (row == 6 and col == 8) or
             (row == 8 and col == 2) or (row == 8 and col == 5)):
             return True
+        # end if
     # end isPlaceTile()
 
-    def isHolidayTile(self, row, col):
+    def is_holiday_tile(self, row, col):
         """
          Description
         -------------
@@ -214,7 +220,64 @@ class Board(QMainWindow, board_funcs.board_funcs):
             (row == 5 and col == 4) or (row == 5 and col == 8) or
             (row == 8 and col == 3) or (row == 8 and col == 6)):
             return True
+        # end if
     # end isHolidayTile()
+
+    def is_hub_tile(self, row, col):
+        """
+        Description
+        -------------
+        Checks if the current row and column position is the hub tile.
+
+        Parameters
+        -------------
+        (1) row: The selected row on the board.
+        (2) col: The selected column on the board.
+        """
+        if (row == 4 and col == 4):
+            return True
+
+    def is_cake_tile(self, row, col):
+        """
+        Description
+        -------------
+        Checks if the current row and column position is a cake tile.
+
+        Parameters
+        -------------
+        (1) row: The selected row on the board.
+        (2) col: The selected column on the board.
+        """
+        if ((row == 0 and col == 4) or (row == 4 and col == 0) or
+            (row == 4 and col == 8) or (row == 8 and col ==4)):
+            return True
+
+    def get_tile_type(self, row, col):
+        """
+        Description
+        -------------
+        Utilizes previous methods for tile checking to return a string of
+        what tile type the current row and column position is
+
+        Parameters
+        -------------
+        (1) row: The selected row on the board.
+        (2) col: The selected column on the board.
+        """
+        if self.is_hub_tile(row, col):
+             return "hub"
+        elif self.is_person_tile(row, col):
+            return "people"
+        elif self.is_holiday_tile(row, col):
+            return "holiday"
+        elif self.is_place_tile(row, col):
+            return "place"
+        elif self.is_event_tile(row, col):
+            return "event"
+        elif self.is_roll_again_tile(row, col):
+            return "roll_again"
+        else:
+            return "Invalid"
 
     def paintEvent(self, event):
         """
@@ -231,12 +294,14 @@ class Board(QMainWindow, board_funcs.board_funcs):
         if not self.players_initialized:
             self.player_widget.update()
             self.players_initialized = True
+        # end if
 
         if self.move_player:
             self.player_widget.dice_amount = int(self.dice_amount)
             self.player_widget.draw_token = True
             self.player_widget.update()
             self.move_player = False
+        # end if
     # end paintEvent()
 
 
@@ -255,8 +320,8 @@ class Board(QMainWindow, board_funcs.board_funcs):
          (1) Don't be lazy and brute force..
          (2) Run the current board layout by the team
         """
-        tmp_painter = QPainter(self)
-        tmp_painter.setPen(QPen(Qt.black, 5, Qt.SolidLine))
+        painter = QPainter(self)
+        painter.setPen(QPen(Qt.black, 5, Qt.SolidLine))
 
         x = 0
         y = 0
@@ -266,24 +331,25 @@ class Board(QMainWindow, board_funcs.board_funcs):
             for col in range(self.num_col_tiles):
 
                 if self.is_roll_again_tile(row, col):
-                    tmp_painter.setBrush(QBrush(self.roll_again_tile_color, Qt.SolidPattern))
-                    tmp_painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                    painter.setBrush(QBrush(self.roll_again_tile_color, Qt.SolidPattern))
+                    painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
 
-                elif self.isPersonTile(row, col):
-                    tmp_painter.setBrush(QBrush(self.person_tile_color, Qt.SolidPattern))
-                    tmp_painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                elif self.is_person_tile(row, col):
+                    painter.setBrush(QBrush(self.person_tile_color, Qt.SolidPattern))
+                    painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
 
-                elif self.isHolidayTile(row, col):
-                    tmp_painter.setBrush(QBrush(self.holiday_tile_color, Qt.SolidPattern))
-                    tmp_painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                elif self.is_holiday_tile(row, col):
+                    painter.setBrush(QBrush(self.holiday_tile_color, Qt.SolidPattern))
+                    painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
 
-                elif self.isEventTile(row, col):
-                    tmp_painter.setBrush(QBrush(self.events_tile_color, Qt.SolidPattern))
-                    tmp_painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                elif self.is_event_tile(row, col):
+                    painter.setBrush(QBrush(self.events_tile_color, Qt.SolidPattern))
+                    painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
 
-                elif self.isPlaceTile(row, col):
-                    tmp_painter.setBrush(QBrush(self.places_tile_color, Qt.SolidPattern))
-                    tmp_painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                elif self.is_place_tile(row, col):
+                    painter.setBrush(QBrush(self.places_tile_color, Qt.SolidPattern))
+                    painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                # end if
 
                 # TODO: Add image for the center tile and HQ tiles
                 '''
@@ -293,14 +359,15 @@ class Board(QMainWindow, board_funcs.board_funcs):
                 '''
                 # Update to x-coordinate for next tile
                 x = x + self.board_tile_width
+            # end for
 
             # Reset (x,y) starting coordinates for next row and columns
             y = y + self.board_tile_height
             x = 0
-        self.board_initialized = True
-        tmp_painter.end()
-    # end draw_board()
 
+        # end for
+        self.board_initialized = True
+    # end draw_board()
 
 # TODO: If the board is not starting point of the application, remove this main when done testing after demo
 if __name__ == "__main__":
