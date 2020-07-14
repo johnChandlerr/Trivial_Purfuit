@@ -103,26 +103,6 @@ def player_token_driver():
             print("\tSorry, \"{}\" is not valid. Please try again.".format(user_input))
 
 
-def board_funcs_driver():
-    print("\n\tBoard Function")
-    board = Board()
-    board.show()
-    #sys.exit(app.exec_())
-    # token = PlayerToken('Player1')
-    # board_function = board_funcs()
-    # Ask question and collect cake
-    print("\n=>Ask question")
-    # q_type = 'date'
-    # title_type = 'cake'
-    # board_function.ask_question(token, q_type, title_type)
-    print("\n=>Player Tile Land")
-    # board_function.tileLand(token)
-    print("\n=>Player round order")
-    # board_function.set_round_order()
-    print("\n=>Player move")
-    # board_function.move()
-
-
 def main():
     app = QApplication(sys.argv)
     running = True
