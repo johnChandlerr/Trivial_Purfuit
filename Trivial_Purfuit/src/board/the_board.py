@@ -7,10 +7,13 @@ from PySide2.QtWidgets import (QPushButton, QTextEdit)
 from PySide2.QtGui import (QPainter, QPen, QBrush)
 from PySide2.QtCore import (Qt, SIGNAL)
 
+
 from Trivial_Purfuit.src.board import board_funcs
+
 from Trivial_Purfuit.src.player_token import player_token
 
 from functools import partial
+
 
 class Board(QMainWindow, board_funcs.board_funcs):
     """
@@ -221,6 +224,62 @@ class Board(QMainWindow, board_funcs.board_funcs):
         # end if
     # end isHolidayTile()
 
+    def is_hub_tile(self, row, col):
+        """
+        Description
+        -------------
+        Checks if the current row and column position is the hub tile.
+
+        Parameters
+        -------------
+        (1) row: The selected row on the board.
+        (2) col: The selected column on the board.
+        """
+        if (row == 4 and col == 4):
+            return True
+
+    def is_cake_tile(self, row, col):
+        """
+        Description
+        -------------
+        Checks if the current row and column position is a cake tile.
+
+        Parameters
+        -------------
+        (1) row: The selected row on the board.
+        (2) col: The selected column on the board.
+        """
+        if ((row == 0 and col == 4) or (row == 4 and col == 0) or
+            (row == 4 and col == 8) or (row == 8 and col ==4)):
+            return True
+
+    def get_tile_type(self, row, col):
+        """
+        Description
+        -------------
+        Utilizes previous methods for tile checking to return a string of
+        what tile type the current row and column position is
+
+        Parameters
+        -------------
+        (1) row: The selected row on the board.
+        (2) col: The selected column on the board.
+        """
+        if self.is_hub_tile(row, col):
+             return "hub"
+        elif self.is_person_tile(row, col):
+            return "people"
+        elif self.is_holiday_tile(row, col):
+            return "holiday"
+        elif self.is_place_tile(row, col):
+            return "place"
+        elif self.is_event_tile(row, col):
+            return "event"
+        elif self.is_roll_again_tile(row, col):
+            return "roll_again"
+        else:
+            return "Invalid"
+
     def paintEvent(self, event):
         """
          Description
@@ -310,7 +369,6 @@ class Board(QMainWindow, board_funcs.board_funcs):
         # end for
         self.board_initialized = True
     # end draw_board()
-
 
 # TODO: If the board is not starting point of the application, remove this main when done testing after demo
 if __name__ == "__main__":
