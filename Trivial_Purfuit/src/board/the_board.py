@@ -69,7 +69,7 @@ class Board(QMainWindow, board_funcs.board_funcs):
         self.connect(left_button, SIGNAL("clicked()"), partial(self.get_direction, "LEFT"))
         self.connect(right_button, SIGNAL("clicked()"), partial(self.get_direction, "RIGHT"))
 
-        get_dice_amount_button = QPushButton("Get Dice!", self)
+        get_dice_amount_button = QPushButton("Move Player", self)
         get_dice_amount_button.move(self.board_width, monitor.height() / 3)
         get_dice_amount_button.clicked.connect(self.get_dice_amount)
         get_dice_amount_button.show()
@@ -85,6 +85,7 @@ class Board(QMainWindow, board_funcs.board_funcs):
         self.dice_text_field.show()
 
         self.initialize_player_tokens()
+        self.layout().addChildWidget(self.player_widget)
     # end temp_setup()
 
 
@@ -102,9 +103,7 @@ class Board(QMainWindow, board_funcs.board_funcs):
         self.player_widget = player_token.PlayerToken("John")
         self.player_widget.board_tile_height = self.board_tile_height
         self.player_widget.board_tile_width  = self.board_tile_width
-        # TODO: Look into warning message, "QMainWindowLayout::addItem: Please use the public QMainWindow API instead"
-        #       that is displayed due to the following line.
-        self.layout().addWidget(self.player_widget)
+        self.player_widget.resize(self.board_width, self.board_height)
     # end initialize_player_tokens()
 
     def reset_player(self):
