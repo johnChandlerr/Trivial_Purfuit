@@ -1,6 +1,6 @@
 import definitions
 #Assuming this is how the import will go once die class is added
-#from Trivial_Purfuit.src.die import Die
+from Trivial_Purfuit.src.die import die
 from Trivial_Purfuit.src.qa_database.question_manager import QuestionManager
 
 class board_funcs:
