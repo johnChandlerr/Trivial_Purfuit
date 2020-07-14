@@ -6,6 +6,7 @@ from PySide2.QtWidgets import (QPushButton, QTextEdit)
 from PySide2.QtGui import (QPainter, QPen, QBrush)
 from PySide2.QtCore import (Qt, SIGNAL)
 from Trivial_Purfuit.src.board.board_funcs import board_funcs
+from Trivial_Purfuit.src.board.the_board import Board
 from Trivial_Purfuit.src.die.die import Die
 from Trivial_Purfuit.src.player_token.player_token import PlayerToken
 from Trivial_Purfuit.src.qa_database.question_manager import QuestionManager
@@ -104,6 +105,9 @@ def player_token_driver():
 
 def board_funcs_driver():
     print("\n\tBoard Function")
+    board = Board()
+    board.show()
+    #sys.exit(app.exec_())
     # token = PlayerToken('Player1')
     # board_function = board_funcs()
     # Ask question and collect cake
@@ -138,7 +142,9 @@ def main():
         elif user_input == '3':
             player_token_driver()
         elif user_input == '4':
-            board_funcs_driver()
+            board = Board()
+            board.show()
+            app.exec_()
         elif user_input == '0':
             running = False
         else:
