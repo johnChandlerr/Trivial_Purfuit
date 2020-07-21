@@ -7,15 +7,12 @@ from PySide2.QtWidgets import (QPushButton, QTextEdit)
 from PySide2.QtGui import (QPainter, QPen, QBrush)
 from PySide2.QtCore import (Qt, SIGNAL)
 
-
 from Trivial_Purfuit.src.board import board_funcs
-
 from Trivial_Purfuit.src.player_token import player_token
-
 from functools import partial
 
 
-class Board(QMainWindow, board_funcs.board_funcs):
+class Board(QMainWindow):
     """
      Description
     -------------
