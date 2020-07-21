@@ -5,6 +5,9 @@
 
               "src/MainWindow/menus/ui_start_menu.py",
               "src/MainWindow/menus/start_menu.ui",
+              "src/MainWindow/menus/setup_menu.ui",
+              "src/MainWindow/menus/ui_setup_menu.py",
+              "src/MainWindow/menus/setup_menu.py",
 
               "src/player_token/player_token.py",
 

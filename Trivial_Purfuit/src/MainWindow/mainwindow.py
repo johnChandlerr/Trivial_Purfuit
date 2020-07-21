@@ -6,6 +6,7 @@ from PySide2.QtCore import (SIGNAL)
 
 from Trivial_Purfuit.src.board.the_board import Board
 from Trivial_Purfuit.src.MainWindow.menus.ui_start_menu import Ui_StartMenuDialog
+from Trivial_Purfuit.src.MainWindow.menus.setup_menu import SetupMenu
 from Trivial_Purfuit.src.MainWindow.ui_mainwindow import Ui_MainWindow
 
 
@@ -35,9 +36,12 @@ class MainWindow(QMainWindow):
 
         self.board = Board()
         self.start_menu = StartMenu()
+        self.setup_menu = SetupMenu()
 
         self.connect(self.start_menu.ui.new_game_button, SIGNAL("clicked()"), self.setup_game)
         self.connect(self.start_menu.ui.cancel_button, SIGNAL("clicked()"), self.close_game)
+        self.connect(self.setup_menu.ui.start_game_button, SIGNAL("clicked()"), self.start_game)
+        self.connect(self.setup_menu.ui.exit_game_button, SIGNAL("clicked()"), self.close_game)
 
         self.start_menu.show()
     # end __init__()
@@ -46,12 +50,21 @@ class MainWindow(QMainWindow):
         """
          Description
         -------------
-         - Function to start the game
+         - Function to configure/setup a new game
         """
         self.start_menu.hide()
+        self.setup_menu.show()
+    # end setup_game()
 
-        #self.board.show()
-    # end start_game()
+    def start_game(self):
+        """
+         Description
+        -------------
+         - Function to start the game
+        """
+        self.setup_menu.hide()
+        self.board.show()
+    # end setup_game()
 
     def close_game(self):
         """
@@ -61,7 +74,7 @@ class MainWindow(QMainWindow):
         """
         QApplication.quit()
     # end close_game()
-
+# end class MainWindow
 
 if __name__ == "__main__":
     try:
