@@ -24,7 +24,7 @@ class board_funcs:
         self.num_col_tiles = 9
         #Assuming 1 die object is managed by the board (at least for now)
         #Rather than individual die objects for each player
-        self.die = Die()
+        self.die = die.Die()
 
     def set_round_order(self, players):
         """

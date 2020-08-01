@@ -10,8 +10,13 @@
               "src/MainWindow/menus/setup_menu.py",
 
               "src/player_token/player_token.py",
+              "src/die/die.py",
+              "src/qa_database/question_manager.py",
 
               "src/board/the_board.py",
-              "src/board/board_funcs.py"
+              "src/board/board_funcs.py",
+
+              "src/board/menus/player_navigation_menu.ui",
+              "src/board/menus/ui_player_navigation_menu.py"
              ]
 }

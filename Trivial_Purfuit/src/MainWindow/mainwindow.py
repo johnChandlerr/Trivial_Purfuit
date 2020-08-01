@@ -1,8 +1,11 @@
 # This Python file uses the following encoding: utf-8
 
 import sys
+
 from PySide2.QtWidgets import (QApplication, QMainWindow, QDialog)
-from PySide2.QtCore import (SIGNAL)
+from PySide2.QtCore import (SIGNAL, QUrl)
+from PySide2.QtGui import (QPainter, QPen, QBrush)
+from PySide2.QtQml import QQmlApplicationEngine
 
 from Trivial_Purfuit.src.board.the_board import Board
 from Trivial_Purfuit.src.MainWindow.menus.ui_start_menu import Ui_StartMenuDialog
@@ -33,7 +36,7 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-
+        self.number_players = 0
         self.board = Board()
         self.start_menu = StartMenu()
         self.setup_menu = SetupMenu()
@@ -62,8 +65,13 @@ class MainWindow(QMainWindow):
         -------------
          - Function to start the game
         """
-        self.setup_menu.hide()
-        self.board.show()
+        try:
+            self.number_players = int(self.setup_menu.ui.players_text_edit.toPlainText())
+            print(self.number_players)
+            self.setup_menu.hide()
+            self.board.show()
+        except ValueError:
+            print("[ERROR] Invalid input! Must be (1, 2, 3, or 4)!")
     # end setup_game()
 
     def close_game(self):
@@ -74,7 +82,11 @@ class MainWindow(QMainWindow):
         """
         QApplication.quit()
     # end close_game()
+
+    def paintEvent(self, event):
+        print("What")
 # end class MainWindow
+
 
 if __name__ == "__main__":
     try:

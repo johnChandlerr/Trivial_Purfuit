@@ -7,7 +7,7 @@ from PySide2.QtWidgets import (QPushButton, QTextEdit)
 from PySide2.QtGui import (QPainter, QPen, QBrush)
 from PySide2.QtCore import (Qt, SIGNAL)
 
-from Trivial_Purfuit.src.board import board_funcs
+from Trivial_Purfuit.src.board.board_funcs import board_funcs
 from Trivial_Purfuit.src.player_token import player_token
 from functools import partial
 
@@ -43,7 +43,8 @@ class Board(QMainWindow):
 
         self.temp_setup()
         self.players_initialized = False
-        self.move_player = False;
+        self.move_player = False
+        self.number_of_players = 0
 
     def temp_setup(self):
         """
@@ -87,7 +88,6 @@ class Board(QMainWindow):
         self.initialize_player_tokens()
         self.layout().addChildWidget(self.player_widget)
     # end temp_setup()
-
 
     def get_direction(self, label):
         if (label == "UP" or label == "DOWN" or
@@ -301,7 +301,6 @@ class Board(QMainWindow):
         # end if
     # end paintEvent()
 
-
     def draw_board(self):
         """
          Description
@@ -365,6 +364,7 @@ class Board(QMainWindow):
         # end for
         self.board_initialized = True
     # end draw_board()
+
 
 # TODO: If the board is not starting point of the application, remove this main when done testing after demo
 if __name__ == "__main__":
