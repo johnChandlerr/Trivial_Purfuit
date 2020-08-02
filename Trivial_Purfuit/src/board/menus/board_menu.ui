@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PlayerNavigationMenu</class>
- <widget class="QWidget" name="PlayerNavigationMenu">
+ <class>BoardMenu</class>
+ <widget class="QWidget" name="BoardMenu">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -124,6 +124,19 @@
     </property>
     <property name="text">
      <string>Dice Amount</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="roll_die_button">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>70</y>
+      <width>80</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Roll Die</string>
     </property>
    </widget>
   </widget>

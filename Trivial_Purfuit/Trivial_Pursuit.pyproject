@@ -4,6 +4,7 @@
               "src/MainWindow/mainwindow.ui",
 
               "src/MainWindow/menus/ui_start_menu.py",
+              "src/MainWindow/menus/start_menu.py",
               "src/MainWindow/menus/start_menu.ui",
               "src/MainWindow/menus/setup_menu.ui",
               "src/MainWindow/menus/ui_setup_menu.py",
@@ -16,7 +17,8 @@
               "src/board/the_board.py",
               "src/board/board_funcs.py",
 
-              "src/board/menus/player_navigation_menu.ui",
-              "src/board/menus/ui_player_navigation_menu.py"
+              "src/board/menus/board_menu.ui",
+              "src/board/menus/ui_board_menu.py",
+              "src/board/menus/board_menu.py"
              ]
 }

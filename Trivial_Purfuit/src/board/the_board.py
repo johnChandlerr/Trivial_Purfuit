@@ -3,14 +3,13 @@
 import sys
 
 from PySide2.QtWidgets import (QApplication, QMainWindow)
-from PySide2.QtWidgets import (QPushButton, QTextEdit)
 from PySide2.QtGui import (QPainter, QPen, QBrush)
 from PySide2.QtCore import (Qt, SIGNAL)
 
 from Trivial_Purfuit.src.board.board_funcs import board_funcs
 from Trivial_Purfuit.src.player_token import player_token
-
-from Trivial_Purfuit.src.board.menus.player_navigation_menu import PlayerNavigationMenu
+from Trivial_Purfuit.src.die.die import Die
+from Trivial_Purfuit.src.board.menus.board_menu import BoardMenu
 from functools import partial
 
 
@@ -36,8 +35,6 @@ class Board(QMainWindow):
         monitor = QApplication.desktop().geometry()
         self.resize(monitor.width(), self.board_height)
 
-        self.player_nav_menu = PlayerNavigationMenu()
-
         self.person_tile_color     = Qt.red
         self.events_tile_color     = Qt.white
         self.places_tile_color     = Qt.blue
@@ -47,6 +44,9 @@ class Board(QMainWindow):
         self.players_initialized = False
         self.move_player = False
         self.number_of_players = 0
+
+        self.board_menu = BoardMenu()
+        self.die        = Die()
     # end __init__()
 
     def update_total_players(self, number_players):
@@ -68,22 +68,22 @@ class Board(QMainWindow):
         monitor = QApplication.desktop().geometry()
 
         # Navigation Menu setup
-        self.player_nav_menu.resize(monitor.width(), monitor.height())
-        self.player_nav_menu.ui.navigation_group.move(self.board_width, monitor.height() / 3)
+        self.board_menu.resize(monitor.width(), monitor.height())
+        self.board_menu.ui.navigation_group.move(self.board_width, monitor.height() / 3)
 
-        temp_x = self.player_nav_menu.ui.navigation_group.x()
-        temp_y = self.player_nav_menu.ui.navigation_group.y() +self.player_nav_menu.ui.navigation_group.height()
-        self.player_nav_menu.ui.misc_group.move(temp_x, temp_y)
+        temp_x = self.board_menu.ui.navigation_group.x()
+        temp_y = self.board_menu.ui.navigation_group.y() + self.board_menu.ui.navigation_group.height()
+        self.board_menu.ui.misc_group.move(temp_x, temp_y)
 
-        self.connect(self.player_nav_menu.ui.up_button, SIGNAL("clicked()"), partial(self.start_move, "UP"))
-        self.connect(self.player_nav_menu.ui.down_button, SIGNAL("clicked()"), partial(self.start_move, "DOWN"))
-        self.connect(self.player_nav_menu.ui.left_button, SIGNAL("clicked()"), partial(self.start_move, "LEFT"))
-        self.connect(self.player_nav_menu.ui.right_button, SIGNAL("clicked()"), partial(self.start_move, "RIGHT"))
-        self.player_nav_menu.ui.reset_button.clicked.connect(self.reset_player)
+        self.connect(self.board_menu.ui.up_button, SIGNAL("clicked()"), partial(self.start_move, "UP"))
+        self.connect(self.board_menu.ui.down_button, SIGNAL("clicked()"), partial(self.start_move, "DOWN"))
+        self.connect(self.board_menu.ui.left_button, SIGNAL("clicked()"), partial(self.start_move, "LEFT"))
+        self.connect(self.board_menu.ui.right_button, SIGNAL("clicked()"), partial(self.start_move, "RIGHT"))
+        self.board_menu.ui.reset_button.clicked.connect(self.reset_player)
 
         self.initialize_player_tokens()
         self.layout().addChildWidget(self.player_widget)
-        self.layout().addChildWidget(self.player_nav_menu)
+        self.layout().addChildWidget(self.board_menu)
     # end temp_setup()
 
     def start_move(self, label):
@@ -92,7 +92,7 @@ class Board(QMainWindow):
                 label == "LEFT" or label == "RIGHT"):
                 self.player_widget.direction_to_move = label
 
-                self.dice_amount = int(self.player_nav_menu.ui.dice_field.toPlainText())
+                self.dice_amount = int(self.board_menu.ui.dice_field.toPlainText())
                 self.move_player = True
                 self.player_widget.turn_status = self.move_player
 

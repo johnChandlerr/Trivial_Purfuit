@@ -3,21 +3,21 @@
 import sys
 
 from PySide2.QtWidgets import (QApplication, QWidget)
-from Trivial_Purfuit.src.board.menus.ui_player_navigation_menu import Ui_PlayerNavigationMenu
+from Trivial_Purfuit.src.board.menus.ui_board_menu import Ui_BoardMenu
 
 
-class PlayerNavigationMenu(QWidget):
+class BoardMenu(QWidget):
     """
      Description
     -------------
         TODO - JGC
     """
     def __init__(self):
-        super(PlayerNavigationMenu, self).__init__()
+        super(BoardMenu, self).__init__()
         monitor = QApplication.desktop().geometry()
         self.resize(monitor.width(), monitor.height())
 
-        self.ui = Ui_PlayerNavigationMenu()
+        self.ui = Ui_BoardMenu()
         self.ui.setupUi(self)
 # end class PlayerNavigationMenu
 
@@ -25,7 +25,7 @@ class PlayerNavigationMenu(QWidget):
 if __name__ == "__main__":
     try:
         app = QApplication([])
-        menu = PlayerNavigationMenu()
+        menu = BoardMenu()
         menu.show()
         sys.exit(app.exec_())
 
