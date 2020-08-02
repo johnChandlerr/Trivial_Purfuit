@@ -1,9 +1,7 @@
-import random
-from PySide2.QtWidgets import (QWidget, QApplication, QMainWindow, QVBoxLayout)
-from PySide2.QtWidgets import (QPushButton, QTextEdit)
+import sys, random, definitions
+from PySide2.QtWidgets import (QApplication, QWidget)
 from PySide2.QtGui import (QPainter, QPen, QBrush, QImage)
 from PySide2.QtCore import (Qt, QRect)
-
 
 class Die(QWidget):
     def __init__(self):
@@ -25,6 +23,8 @@ class Die(QWidget):
 
         self.dice_amount = 0
 
+        self.image_path = definitions.ROOT_DIR + "/Trivial_Purfuit/src/die/"
+
     def roll(self):
         self.dice_amount = 1 + random.randrange(self.sides)
         return self.dice_amount
@@ -35,34 +35,50 @@ class Die(QWidget):
 
     def draw_dice_fun(self):
         painter = QPainter(self)
+
         self.x = self.board_tile_width * 6
         self.y = self.board_tile_height * 2
+
+
         # initial dice
         painter.drawImage(QRect(self.x, self.y, self.width, self.height),
-                          QImage("./dice-six-faces-six.png"))
+                          QImage(self.image_path + "dice-six-faces-six.png"))
 
         if not self.dice_initialized:
             self.x = self.board_tile_width * 5 - self.width
             self.y = self.board_tile_height * 5 - self.height
             self.dice_initialized = True
+        
         elif self.dice_amount == 1:
             painter.drawImage(QRect(self.x, self.y, self.width, self.height),
-                              QImage("./dice-six-faces-one.png"))
+                              QImage(self.image_path + "dice-six-faces-one.png"))
         elif self.dice_amount == 2:
             painter.drawImage(QRect(self.x, self.y, self.width, self.height),
-                              QImage("./dice-six-faces-two.png"))
+                              QImage(self.image_path + "dice-six-faces-two.png"))
         elif self.dice_amount == 3:
             painter.drawImage(QRect(self.x, self.y, self.width, self.height),
-                              QImage("./dice-six-faces-three.png"))
+                              QImage(self.image_path + "dice-six-faces-three.png"))
         elif self.dice_amount == 4:
             painter.drawImage(QRect(self.x, self.y, self.width, self.height),
-                              QImage("./dice-six-faces-four.png"))
+                              QImage(self.image_path + "dice-six-faces-four.png"))
         elif self.dice_amount == 5:
             painter.drawImage(QRect(self.x, self.y, self.width, self.height),
-                              QImage("./dice-six-faces-five.png"))
+                              QImage(self.image_path + "dice-six-faces-five.png"))
         elif self.dice_amount == 6:
             painter.drawImage(QRect(self.x, self.y, self.width, self.height),
-                              QImage("./dice-six-faces-six.png"))
+                              QImage(self.image_path + "dice-six-faces-six.png"))
         # end if
-        print("Dice: ", self.dice_amount)
+
+        print("Die: dice_amount = ", self.dice_amount)
         self.draw_dice = False
+
+
+if __name__ == "__main__":
+    try:
+        app = QApplication([])
+        die = Die()
+        die.show()
+        sys.exit(app.exec_())
+
+    except Exception as e:
+        print(e)

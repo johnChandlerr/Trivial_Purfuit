@@ -46,9 +46,11 @@ class Board(QMainWindow):
         self.roll_again_tile_color = Qt.darkGray
 
         self.players_initialized = False
+        self.dice_initialized    = False
+
         self.number_of_players = 0
+        self.die = Die()
         self.board_menu = BoardMenu()
-        self.die        = Die()
         self.qa_manager = QuestionManager(definitions.ROOT_DIR + "/Trivial_Purfuit/csvs/test2.csv")
     # end __init__()
 
@@ -66,7 +68,7 @@ class Board(QMainWindow):
         """
          Description
         -------------
-         - Temporary function to setup some Qt GUI functionality for proof-of-concept testing.
+         - TODO: JGC
         """
         monitor = QApplication.desktop().geometry()
 
@@ -78,6 +80,7 @@ class Board(QMainWindow):
         temp_y = self.board_menu.ui.navigation_group.y() + self.board_menu.ui.navigation_group.height()
         self.board_menu.ui.misc_group.move(temp_x, temp_y)
 
+        # Connect signals/slots for buttons on board menu
         self.connect(self.board_menu.ui.up_button, SIGNAL("clicked()"), partial(self.start_move, "UP"))
         self.connect(self.board_menu.ui.down_button, SIGNAL("clicked()"), partial(self.start_move, "DOWN"))
         self.connect(self.board_menu.ui.left_button, SIGNAL("clicked()"), partial(self.start_move, "LEFT"))
@@ -85,18 +88,35 @@ class Board(QMainWindow):
         self.connect(self.board_menu.ui.reset_button, SIGNAL("clicked()"), self.reset_player)
         self.connect(self.board_menu.ui.roll_die_button, SIGNAL("clicked()"), self.get_dice_value)
 
+        # Player token initialization
         self.initialize_player_tokens()
+
+        # Die Setup/initialization
+        self.initialize_dice()
+
         self.layout().addChildWidget(self.player_widget)
+        self.layout().addChildWidget(self.die)
         self.layout().addChildWidget(self.board_menu)
     # end temp_setup()
 
     def get_dice_value(self):
+        """
+         Description
+        -------------
+         - TODO: JGC
+        """
         self.player_widget.moves_left = self.die.roll()
         self.board_menu.ui.dice_field.clear()
         self.board_menu.ui.dice_field.insertPlainText(str(self.player_widget.moves_left))
+        self.update()
     # end get_dice_value()
 
     def start_move(self, label):
+        """
+         Description
+        -------------
+         - TODO: JGC
+        """
         try:
             if (label == "UP" or label == "DOWN" or
                 label == "LEFT" or label == "RIGHT"):
@@ -147,7 +167,23 @@ class Board(QMainWindow):
         self.player_widget.resize(self.board_width, self.board_height)
     # end initialize_player_tokens()
 
+    def initialize_dice(self):
+        """
+         Description
+        -------------
+         - TODO: JGC
+        """
+        self.die.board_tile_height = self.board_tile_height
+        self.die.board_tile_width  = self.board_tile_width
+        self.die.resize(self.board_width, self.board_height)
+    # end initialize_dice()
+
     def reset_player(self):
+        """
+         Description
+        -------------
+         - TODO: JGC
+        """
         self.player_widget.direction_to_move = "NONE"
         self.player_widget.player_initialized = False
         self.player_widget.turn_status = False
@@ -329,6 +365,12 @@ class Board(QMainWindow):
         """
 
         self.draw_board()
+
+        if not self.dice_initialized:
+            self.die.update()
+            self.dice_initialized = True
+        # end if
+
         self.do_player_turn()
     # end paintEvent()
 
@@ -351,6 +393,11 @@ class Board(QMainWindow):
     # end move_player_token()
 
     def perform_tile_action(self):
+        """
+         Description
+        -------------
+         - TODO: JGC
+        """
         self.player_widget.update()
         tile_type = self.get_tile_type(self.player_widget.location[0], self.player_widget.location[1])
         print("The Tile/Question Type Received: " + tile_type)
