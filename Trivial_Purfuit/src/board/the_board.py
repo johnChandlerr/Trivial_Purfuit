@@ -1,15 +1,19 @@
 # This Python file uses the following encoding: utf-8
 
 import sys
+import definitions
 
 from PySide2.QtWidgets import (QApplication, QMainWindow)
 from PySide2.QtGui import (QPainter, QPen, QBrush)
 from PySide2.QtCore import (Qt, SIGNAL)
 
 from Trivial_Purfuit.src.board.board_funcs import board_funcs
-from Trivial_Purfuit.src.player_token import player_token
-from Trivial_Purfuit.src.die.die import Die
 from Trivial_Purfuit.src.board.menus.board_menu import BoardMenu
+from Trivial_Purfuit.src.player_token.player_token import PlayerToken
+from Trivial_Purfuit.src.die.die import Die
+from Trivial_Purfuit.src.qa_database.question_manager import QuestionManager
+
+
 from functools import partial
 
 
@@ -42,11 +46,10 @@ class Board(QMainWindow):
         self.roll_again_tile_color = Qt.darkGray
 
         self.players_initialized = False
-        self.move_player = False
         self.number_of_players = 0
-
         self.board_menu = BoardMenu()
         self.die        = Die()
+        self.qa_manager = QuestionManager(definitions.ROOT_DIR + "/Trivial_Purfuit/csvs/test2.csv")
     # end __init__()
 
     def update_total_players(self, number_players):
@@ -79,35 +82,66 @@ class Board(QMainWindow):
         self.connect(self.board_menu.ui.down_button, SIGNAL("clicked()"), partial(self.start_move, "DOWN"))
         self.connect(self.board_menu.ui.left_button, SIGNAL("clicked()"), partial(self.start_move, "LEFT"))
         self.connect(self.board_menu.ui.right_button, SIGNAL("clicked()"), partial(self.start_move, "RIGHT"))
-        self.board_menu.ui.reset_button.clicked.connect(self.reset_player)
+        self.connect(self.board_menu.ui.reset_button, SIGNAL("clicked()"), self.reset_player)
+        self.connect(self.board_menu.ui.roll_die_button, SIGNAL("clicked()"), self.get_dice_value)
 
         self.initialize_player_tokens()
         self.layout().addChildWidget(self.player_widget)
         self.layout().addChildWidget(self.board_menu)
     # end temp_setup()
 
+    def get_dice_value(self):
+        self.player_widget.moves_left = self.die.roll()
+        self.board_menu.ui.dice_field.clear()
+        self.board_menu.ui.dice_field.insertPlainText(str(self.player_widget.moves_left))
+    # end get_dice_value()
+
     def start_move(self, label):
         try:
             if (label == "UP" or label == "DOWN" or
                 label == "LEFT" or label == "RIGHT"):
-                self.player_widget.direction_to_move = label
 
-                self.dice_amount = int(self.board_menu.ui.dice_field.toPlainText())
-                self.move_player = True
-                self.player_widget.turn_status = self.move_player
+                if (self.player_widget.moves_left > 0):
+                    self.player_widget.direction_to_move = label
+                    self.player_widget.turn_status = True
 
-                # Manually calls a the paint QEvent.
-                self.update()
+                    self.player_widget.update_location()
+                    self.player_widget.moves_left = self.player_widget.moves_left - 1
+                    self.board_menu.ui.dice_field.clear()
+                    self.board_menu.ui.dice_field.insertPlainText(str(self.player_widget.moves_left))
 
+                    if self.player_widget.moves_left == 0:
+                        self.player_widget.done_moving = True
+                    # end if
+
+                    # Manually calls the paint QEvent.
+                    self.update()
+
+                    # Once the player is out of spaces to move, prompt the player with a
+                    # question from the QA Manager.
+                    # TODO: JGC - Prompt the player with a question.
+                    if self.player_widget.moves_left == 0 and self.player_widget.done_moving:
+                        self.player_widget.done_moving = False
+                        self.perform_tile_action()
+                    # end if
+
+                else:
+                    print("No moves left!")
         except ValueError:
             print("[ERROR] Invalid dice roll amount!")
-
-    # end get_direction()
+    # end start_move()
 
     def initialize_player_tokens(self):
-        # TODO: Temp. one player for proof-of-concept
+        """
+         Description
+        -------------
+         TODO: JGC - We only support one player for proof-of-concept.
+                     Once we have finalized all the core functionality
+                     and integration between all subsystems, we will add
+                     multiplayer features.
 
-        self.player_widget = player_token.PlayerToken("John")
+        """
+        self.player_widget = PlayerToken("John")
         self.player_widget.board_tile_height = self.board_tile_height
         self.player_widget.board_tile_width  = self.board_tile_width
         self.player_widget.resize(self.board_width, self.board_height)
@@ -116,17 +150,14 @@ class Board(QMainWindow):
     def reset_player(self):
         self.player_widget.direction_to_move = "NONE"
         self.player_widget.player_initialized = False
+        self.player_widget.turn_status = False
+        self.player_widget.done_moving = False
+        self.player_widget.moves_left = 0
+        self.player_widget.location[0] = 4
+        self.player_widget.location[1] = 4
+        self.board_menu.ui.dice_field.clear()
         self.player_widget.update()
     # end reset_player()
-
-    def get_dice_amount(self):
-        self.dice_amount = int(self.dice_text_field.toPlainText())
-        self.move_player = True
-        self.player_widget.turn_status = self.move_player
-
-        # Manually calls a the paint QEvent.
-        self.update()
-    # end get_dice_amount()
 
     def is_roll_again_tile(self, row, col):
         """
@@ -273,13 +304,13 @@ class Board(QMainWindow):
         if self.is_hub_tile(row, col):
              return "hub"
         elif self.is_person_tile(row, col):
-            return "people"
+            return "People"
         elif self.is_holiday_tile(row, col):
-            return "holiday"
+            return "Holiday"
         elif self.is_place_tile(row, col):
-            return "place"
+            return "Location"
         elif self.is_event_tile(row, col):
-            return "event"
+            return "Event"
         elif self.is_roll_again_tile(row, col):
             return "roll_again"
         else:
@@ -296,11 +327,12 @@ class Board(QMainWindow):
         -------------
          (1) event: The event signal (QEvent.Type.Paint).
         """
+
         self.draw_board()
-        self.move_player_token()
+        self.do_player_turn()
     # end paintEvent()
 
-    def move_player_token(self):
+    def do_player_turn(self):
         """
          Description
         -------------
@@ -311,14 +343,35 @@ class Board(QMainWindow):
             self.players_initialized = True
         # end if
 
-        if self.move_player:
-            self.player_widget.dice_amount = int(self.dice_amount)
+        if self.player_widget.turn_status:
             self.player_widget.draw_token = True
             self.player_widget.update()
-            self.move_player = False
+            self.player_widget.turn_status = False
         # end if
     # end move_player_token()
 
+    def perform_tile_action(self):
+        self.player_widget.update()
+        tile_type = self.get_tile_type(self.player_widget.location[0], self.player_widget.location[1])
+        print("The Tile/Question Type Received: " + tile_type)
+
+        if (tile_type == "People" or tile_type == "Holiday" or
+            tile_type == "Location" or tile_type == "Event"):
+            question = self.qa_manager.get_question(tile_type)
+            print("Question: ", question)
+            print("TODO - Get user input for answer")
+
+        elif (tile_type == "roll_again"):
+            print("TODO - Roll Again Tile Land")
+
+        elif (tile_type == "hub_tile"):
+            print("TODO - Center Hub Tile Land")
+
+        else:
+            print("Invalid Tile/Question Type Received")
+            print("Row: " + str(self.player_widget.location[0]))
+            print("Col: " + str(self.player_widget.location[1]))
+    # end prompt_player_with_question
 
     def draw_board(self):
         """

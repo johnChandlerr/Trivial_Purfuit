@@ -22,7 +22,7 @@ class PlayerToken(QWidget):
         self.board_tile_width  = 0
         self.board_tile_height = self.board_tile_width
 
-        self.dice_amount = 0
+        self.moves_left = 0
 
         self.name = player_name
         self.cake_list = {
@@ -33,9 +33,9 @@ class PlayerToken(QWidget):
         self.turn_status = False
         self.player_initialized = False
         self.draw_token = False
-        self.location = []
+        self.location = [4, 4]
         self.direction_to_move = ""
-
+        self.done_moving = False
 
     def check_cake_piece(self,cake_category):
         """
@@ -60,13 +60,28 @@ class PlayerToken(QWidget):
         self.draw_player()
     # end paintEvent()
 
-
-    def draw_player(self):
-        spaces    = self.dice_amount
+    def update_location(self):
         direction = self.direction_to_move
 
+        if direction == "UP":
+            self.y = self.y - self.board_tile_height
+            self.location[0] = self.location[0] - 1
+
+        elif direction == "DOWN":
+            self.y = self.y + self.board_tile_height
+            self.location[0] = self.location[0] + 1
+
+        elif direction == "LEFT":
+            self.x = self.x - self.board_tile_width
+            self.location[1] = self.location[1] - 1
+
+        elif direction == "RIGHT":
+            self.x = self.x + self.board_tile_width
+            self.location[1] = self.location[1] + 1
+    # end update_location()
+
+    def draw_player(self):
         painter = QPainter(self)
-        #painter.setClipRect(QRect(0, 0, 1900, 1900))
         painter.setPen(QPen(Qt.black, 5, Qt.SolidLine))
         painter.setBrush(QBrush(Qt.darkMagenta, Qt.SolidPattern))
 
@@ -74,24 +89,6 @@ class PlayerToken(QWidget):
             self.x = self.board_tile_width * 5  - self.width
             self.y = self.board_tile_height * 5 - self.height
             self.player_initialized = True
-
-        elif self.draw_token:
-            if direction == "UP":
-                self.y = self.y - (self.board_tile_height * spaces)
-                print("UP Player X: ", self.x)
-                print("UP Player Y: ", self.y)
-
-            elif direction == "DOWN":
-                self.y = self.y + (self.board_tile_height * spaces)
-                print("DOWN Player X: ", self.x)
-                print("DOWN Player Y: ", self.y)
-
-            elif direction == "LEFT":
-                self.x = self.x - (self.board_tile_width * spaces)
-
-            elif direction == "RIGHT":
-                self.x = self.x + (self.board_tile_width * spaces)
-
 
         painter.drawRect(self.x, self.y, self.width, self.height)
         self.draw_token = False
