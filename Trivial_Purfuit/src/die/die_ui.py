@@ -45,6 +45,7 @@ class Board(QMainWindow, board_funcs.board_funcs):
         self.blue = QColor('#5e94ff')
         self.green = QColor('#a2d471')
         self.dark_gray = QColor('#8b98a6')
+        self.purple = QColor('#9065e5')
 
         self.person_tile_color = self.red
         self.events_tile_color = self.white

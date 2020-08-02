@@ -1,7 +1,7 @@
 
 from PySide2.QtWidgets import (QWidget, QApplication, QMainWindow, QVBoxLayout)
 from PySide2.QtWidgets import (QPushButton, QTextEdit)
-from PySide2.QtGui import (QPainter, QPen, QBrush)
+from PySide2.QtGui import (QPainter, QPen, QBrush, QColor)
 from PySide2.QtCore import (Qt, QRect)
 
 class PlayerToken(QWidget):
@@ -18,12 +18,12 @@ class PlayerToken(QWidget):
         self.height = self.width
         self.x = 0
         self.y = 0
-
         self.board_tile_width  = 0
         self.board_tile_height = self.board_tile_width
 
         self.dice_amount = 0
 
+        self.purple = QColor('#9065e5')
         self.name = player_name
         self.cake_list = {
             "people":False,
@@ -68,7 +68,7 @@ class PlayerToken(QWidget):
         painter = QPainter(self)
         #painter.setClipRect(QRect(0, 0, 1900, 1900))
         painter.setPen(QPen(Qt.black, 5, Qt.SolidLine))
-        painter.setBrush(QBrush(Qt.darkMagenta, Qt.SolidPattern))
+        painter.setBrush(QBrush(self.purple, Qt.SolidPattern))
 
         if not self.player_initialized:
             self.x = self.board_tile_width * 5  - self.width
