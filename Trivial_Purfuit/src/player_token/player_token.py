@@ -1,7 +1,7 @@
 
 from PySide2.QtWidgets import (QWidget, QApplication, QMainWindow, QVBoxLayout)
 from PySide2.QtWidgets import (QPushButton, QTextEdit)
-from PySide2.QtGui import (QPainter, QPen, QBrush)
+from PySide2.QtGui import (QPainter, QPen, QBrush, QColor)
 from PySide2.QtCore import (Qt, QRect)
 
 class PlayerToken(QWidget):
@@ -27,6 +27,7 @@ class PlayerToken(QWidget):
 
         self.moves_left = 0
 
+        self.purple = QColor('#9065e5')
         self.name = player_name
         self.cake_list = {
             "people":False,
