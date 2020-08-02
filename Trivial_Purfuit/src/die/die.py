@@ -45,9 +45,7 @@ class Die(QWidget):
             self.x = self.board_tile_width * 5 - self.width
             self.y = self.board_tile_height * 5 - self.height
             self.dice_initialized = True
-
-        print("Dice: ", self.dice_amount)
-        if self.dice_amount == 1:
+        elif self.dice_amount == 1:
             painter.drawImage(QRect(self.x + 150, self.y - 150, self.width, self.height),
                               QImage("./dice-six-faces-one.png"))
         elif self.dice_amount == 2:
@@ -65,4 +63,6 @@ class Die(QWidget):
         elif self.dice_amount == 6:
             painter.drawImage(QRect(self.x + 150, self.y - 150, self.width, self.height),
                               QImage("./dice-six-faces-six.png"))
+        # end if
+        print("Dice: ", self.dice_amount)
         self.draw_dice = False

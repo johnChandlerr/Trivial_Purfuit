@@ -4,12 +4,15 @@ import sys
 
 from PySide2.QtWidgets import (QApplication, QMainWindow)
 from PySide2.QtWidgets import (QPushButton, QTextEdit)
-from PySide2.QtGui import (QPainter, QPen, QBrush, QImage)
-from PySide2.QtCore import (Qt, SIGNAL, QRect)
+from PySide2.QtGui import (QPainter, QPen, QBrush)
+from PySide2.QtCore import (Qt, SIGNAL)
+
 
 from Trivial_Purfuit.src.board import board_funcs
-from Trivial_Purfuit.src.die import die
+
 from Trivial_Purfuit.src.player_token import player_token
+
+from Trivial_Purfuit.src.die import die
 
 from functools import partial
 
@@ -20,7 +23,6 @@ class Board(QMainWindow, board_funcs.board_funcs):
     -------------
         The board for Trivial Purfuit.
     """
-
     def __init__(self):
         super().__init__()
 
@@ -28,20 +30,20 @@ class Board(QMainWindow, board_funcs.board_funcs):
         self.num_row_tiles = 9
         self.num_col_tiles = 9
 
-        self.board_tile_width = 75
+        self.board_tile_width  = 75
         self.board_tile_height = self.board_tile_width
 
-        self.board_width = self.num_row_tiles * self.board_tile_width
+        self.board_width  = self.num_row_tiles * self.board_tile_width
         self.board_height = self.num_col_tiles * self.board_tile_height
 
         monitor = QApplication.desktop().geometry()
 
         self.resize(monitor.width(), self.board_height)
 
-        self.person_tile_color = Qt.red
-        self.events_tile_color = Qt.white
-        self.places_tile_color = Qt.blue
-        self.holiday_tile_color = Qt.green
+        self.person_tile_color     = Qt.red
+        self.events_tile_color     = Qt.white
+        self.places_tile_color     = Qt.blue
+        self.holiday_tile_color    = Qt.green
         self.roll_again_tile_color = Qt.darkGray
 
         self.temp_setup()
@@ -58,9 +60,9 @@ class Board(QMainWindow, board_funcs.board_funcs):
         monitor = QApplication.desktop().geometry()
 
         # TODO: Remove these buttons once you're done testing and showing proof-of-concept
-        up_button = QPushButton("UP", self)
-        down_button = QPushButton("DOWN", self)
-        left_button = QPushButton("LEFT", self)
+        up_button    = QPushButton("UP", self)
+        down_button  = QPushButton("DOWN", self)
+        left_button  = QPushButton("LEFT", self)
         right_button = QPushButton("RIGHT", self)
 
         up_button.move(self.board_width, monitor.height() / 3 - up_button.height())
@@ -89,7 +91,7 @@ class Board(QMainWindow, board_funcs.board_funcs):
         self.dice_text_field.show()
 
         roll_dice_button = QPushButton("Roll & Move", self)
-        roll_dice_button.move(self.board_width, monitor.height() / 3 - (up_button.height() * 8))
+        roll_dice_button.move(self.board_width, monitor.height() / 3 - (up_button.height() * 5))
         roll_dice_button.clicked.connect(self.roll_dice)
         roll_dice_button.show()
 
@@ -97,26 +99,24 @@ class Board(QMainWindow, board_funcs.board_funcs):
         self.initialize_dice()
         self.layout().addChildWidget(self.player_widget)
         self.layout().addChildWidget(self.dice_widget)
-
     # end temp_setup()
+
 
     def get_direction(self, label):
         if (label == "UP" or label == "DOWN" or
-                label == "LEFT" or label == "RIGHT"):
+            label == "LEFT" or label == "RIGHT"):
             self.player_widget.direction_to_move = label
 
         else:
             raise NameError("Invalid Direction Received")
-
     # end get_direction()
 
     def initialize_player_tokens(self):
         # TODO: Temp. one player for proof-of-concept
         self.player_widget = player_token.PlayerToken("John")
         self.player_widget.board_tile_height = self.board_tile_height
-        self.player_widget.board_tile_width = self.board_tile_width
+        self.player_widget.board_tile_width  = self.board_tile_width
         self.player_widget.resize(self.board_width, self.board_height)
-
     # end initialize_player_tokens()
 
     def initialize_dice(self):
@@ -124,21 +124,21 @@ class Board(QMainWindow, board_funcs.board_funcs):
         self.dice_widget.board_tile_height = self.board_tile_height
         self.dice_widget.board_tile_width = self.board_tile_width
         self.dice_widget.resize(self.board_width, self.board_height)
+    # end initialize_dice()
 
     def reset_player(self):
         self.player_widget.direction_to_move = "NONE"
         self.player_widget.player_initialized = False
         self.player_widget.update()
-
     # end reset_player()
 
     def roll_dice(self):
         roll_num = int(self.dice_widget.roll())
         self.dice_amount = roll_num
-        self.dice_widget.update()
         self.move_player = True
         self.player_widget.turn_status = self.move_player
         self.update()
+    # end roll_dice()
 
     def get_dice_amount(self):
         self.dice_amount = int(self.dice_text_field.toPlainText())
@@ -147,7 +147,6 @@ class Board(QMainWindow, board_funcs.board_funcs):
 
         # Manually calls a the paint QEvent.
         self.update()
-
     # end get_dice_amount()
 
     def is_roll_again_tile(self, row, col):
@@ -162,10 +161,9 @@ class Board(QMainWindow, board_funcs.board_funcs):
          (2) col: The selected column on the board.
         """
         if ((row == 0 and col == 0) or (row == 0 and col == 8) or
-                (row == 8 and col == 0) or (row == 8 and col == 8)):
+            (row == 8 and col == 0) or (row == 8 and col == 8)):
             return True
         # end if
-
     # end isRollAgainTile()
 
     def is_person_tile(self, row, col):
@@ -180,13 +178,12 @@ class Board(QMainWindow, board_funcs.board_funcs):
          (2) col: The selected column on the board.
         """
         if ((row == 0 and col == 3) or (row == 0 and col == 6) or
-                (row == 1 and col == 0) or (row == 3 and col == 4) or
-                (row == 4 and col == 2) or (row == 4 and col == 8) or
-                (row == 5 and col == 0) or (row == 7 and col == 4) or
-                (row == 8 and col == 1) or (row == 8 and col == 7)):
+            (row == 1 and col == 0) or (row == 3 and col == 4) or
+            (row == 4 and col == 2) or (row == 4 and col == 8) or
+            (row == 5 and col == 0) or (row == 7 and col == 4) or
+            (row == 8 and col == 1) or (row == 8 and col == 7)):
             return True
         # end if
-
     # end isPersonTile()
 
     def is_event_tile(self, row, col):
@@ -201,14 +198,13 @@ class Board(QMainWindow, board_funcs.board_funcs):
          (2) col: The selected column on the board.
         """
         if ((row == 0 and col == 2) or (row == 0 and col == 5) or
-                (row == 2 and col == 0) or (row == 2 and col == 4) or
-                (row == 3 and col == 8) or
-                (row == 4 and col == 1) or (row == 4 and col == 5) or
-                (row == 7 and col == 0) or (row == 7 and col == 8) or
-                (row == 8 and col == 4)):
+            (row == 2 and col == 0) or (row == 2 and col == 4) or
+            (row == 3 and col == 8) or
+            (row == 4 and col == 1) or (row == 4 and col == 5) or
+            (row == 7 and col == 0) or (row == 7 and col == 8) or
+            (row == 8 and col == 4)):
             return True
         # end if
-
     # end isEventTile()
 
     def is_place_tile(self, row, col):
@@ -223,14 +219,13 @@ class Board(QMainWindow, board_funcs.board_funcs):
          (2) col: The selected column on the board.
         """
         if ((row == 0 and col == 4) or (row == 1 and col == 8) or
-                (row == 3 and col == 0) or
-                (row == 4 and col == 3) or (row == 4 and col == 7) or
-                (row == 6 and col == 0) or (row == 6 and col == 4) or
-                (row == 6 and col == 8) or
-                (row == 8 and col == 2) or (row == 8 and col == 5)):
+            (row == 3 and col == 0) or
+            (row == 4 and col == 3) or (row == 4 and col == 7) or
+            (row == 6 and col == 0) or (row == 6 and col == 4) or
+            (row == 6 and col == 8) or
+            (row == 8 and col == 2) or (row == 8 and col == 5)):
             return True
         # end if
-
     # end isPlaceTile()
 
     def is_holiday_tile(self, row, col):
@@ -245,13 +240,12 @@ class Board(QMainWindow, board_funcs.board_funcs):
          (2) col: The selected column on the board.
         """
         if ((row == 0 and col == 1) or (row == 0 and col == 7) or
-                (row == 1 and col == 4) or (row == 2 and col == 8) or
-                (row == 4 and col == 0) or (row == 4 and col == 6) or
-                (row == 5 and col == 4) or (row == 5 and col == 8) or
-                (row == 8 and col == 3) or (row == 8 and col == 6)):
+            (row == 1 and col == 4) or (row == 2 and col == 8) or
+            (row == 4 and col == 0) or (row == 4 and col == 6) or
+            (row == 5 and col == 4) or (row == 5 and col == 8) or
+            (row == 8 and col == 3) or (row == 8 and col == 6)):
             return True
         # end if
-
     # end isHolidayTile()
 
     def is_hub_tile(self, row, col):
@@ -280,7 +274,7 @@ class Board(QMainWindow, board_funcs.board_funcs):
         (2) col: The selected column on the board.
         """
         if ((row == 0 and col == 4) or (row == 4 and col == 0) or
-                (row == 4 and col == 8) or (row == 8 and col == 4)):
+            (row == 4 and col == 8) or (row == 8 and col ==4)):
             return True
 
     def get_tile_type(self, row, col):
@@ -296,7 +290,7 @@ class Board(QMainWindow, board_funcs.board_funcs):
         (2) col: The selected column on the board.
         """
         if self.is_hub_tile(row, col):
-            return "hub"
+             return "hub"
         elif self.is_person_tile(row, col):
             return "people"
         elif self.is_holiday_tile(row, col):
@@ -325,6 +319,7 @@ class Board(QMainWindow, board_funcs.board_funcs):
         if not self.dice_initialized:
             self.dice_widget.update()
             self.dice_initialized = True
+        # end if
 
         if not self.players_initialized:
             self.player_widget.update()
@@ -337,8 +332,8 @@ class Board(QMainWindow, board_funcs.board_funcs):
             self.player_widget.update()
             self.move_player = False
         # end if
-
     # end paintEvent()
+
 
     def draw_board(self):
         """
@@ -402,12 +397,7 @@ class Board(QMainWindow, board_funcs.board_funcs):
 
         # end for
         self.board_initialized = True
-
-        # draw dice
-        # if self.dice_amount == 6:
-         #   painter.drawImage(QRect(800, 15, 150, 150), QImage("./dice.png"))
     # end draw_board()
-
 
 # TODO: If the board is not starting point of the application, remove this main when done testing after demo
 if __name__ == "__main__":
