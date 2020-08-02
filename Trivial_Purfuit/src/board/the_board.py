@@ -9,6 +9,8 @@ from PySide2.QtCore import (Qt, SIGNAL)
 
 from Trivial_Purfuit.src.board.board_funcs import board_funcs
 from Trivial_Purfuit.src.player_token import player_token
+
+from Trivial_Purfuit.src.board.menus.player_navigation_menu import PlayerNavigationMenu
 from functools import partial
 
 
@@ -32,8 +34,9 @@ class Board(QMainWindow):
         self.board_height = self.num_col_tiles * self.board_tile_height
 
         monitor = QApplication.desktop().geometry()
-
         self.resize(monitor.width(), self.board_height)
+
+        self.player_nav_menu = PlayerNavigationMenu()
 
         self.person_tile_color     = Qt.red
         self.events_tile_color     = Qt.white
@@ -41,12 +44,22 @@ class Board(QMainWindow):
         self.holiday_tile_color    = Qt.green
         self.roll_again_tile_color = Qt.darkGray
 
-        self.temp_setup()
         self.players_initialized = False
         self.move_player = False
         self.number_of_players = 0
+    # end __init__()
 
-    def temp_setup(self):
+    def update_total_players(self, number_players):
+        """
+         Description
+        -------------
+            TODO: JGC
+        """
+        self.number_of_players = number_players
+        print(self.number_of_players)
+    # end update_total_players()
+
+    def initialize_game(self):
         """
          Description
         -------------
@@ -54,52 +67,46 @@ class Board(QMainWindow):
         """
         monitor = QApplication.desktop().geometry()
 
-        # TODO: Remove these buttons once you're done testing and showing proof-of-concept
-        up_button    = QPushButton("UP", self)
-        down_button  = QPushButton("DOWN", self)
-        left_button  = QPushButton("LEFT", self)
-        right_button = QPushButton("RIGHT", self)
+        # Navigation Menu setup
+        self.player_nav_menu.resize(monitor.width(), monitor.height())
+        self.player_nav_menu.ui.navigation_group.move(self.board_width, monitor.height() / 3)
 
-        up_button.move(self.board_width, monitor.height() / 3 - up_button.height())
-        down_button.move(self.board_width, monitor.height() / 3 - (up_button.height() * 2))
-        left_button.move(self.board_width, monitor.height() / 3 - (up_button.height() * 3))
-        right_button.move(self.board_width, monitor.height() / 3 - (up_button.height() * 4))
+        temp_x = self.player_nav_menu.ui.navigation_group.x()
+        temp_y = self.player_nav_menu.ui.navigation_group.y() +self.player_nav_menu.ui.navigation_group.height()
+        self.player_nav_menu.ui.misc_group.move(temp_x, temp_y)
 
-        self.connect(up_button, SIGNAL("clicked()"), partial(self.get_direction, "UP"))
-        self.connect(down_button, SIGNAL("clicked()"), partial(self.get_direction, "DOWN"))
-        self.connect(left_button, SIGNAL("clicked()"), partial(self.get_direction, "LEFT"))
-        self.connect(right_button, SIGNAL("clicked()"), partial(self.get_direction, "RIGHT"))
-
-        get_dice_amount_button = QPushButton("Move Player", self)
-        get_dice_amount_button.move(self.board_width, monitor.height() / 3)
-        get_dice_amount_button.clicked.connect(self.get_dice_amount)
-        get_dice_amount_button.show()
-
-        reset_player_button = QPushButton("Reset", self)
-        reset_player_button.move(get_dice_amount_button.x() + get_dice_amount_button.width(),
-                                 get_dice_amount_button.y() + get_dice_amount_button.height())
-        reset_player_button.clicked.connect(self.reset_player)
-        reset_player_button.show()
-
-        self.dice_text_field = QTextEdit("<Enter Dice Amount>", self)
-        self.dice_text_field.move(self.board_width + 100, monitor.height() / 3)
-        self.dice_text_field.show()
+        self.connect(self.player_nav_menu.ui.up_button, SIGNAL("clicked()"), partial(self.start_move, "UP"))
+        self.connect(self.player_nav_menu.ui.down_button, SIGNAL("clicked()"), partial(self.start_move, "DOWN"))
+        self.connect(self.player_nav_menu.ui.left_button, SIGNAL("clicked()"), partial(self.start_move, "LEFT"))
+        self.connect(self.player_nav_menu.ui.right_button, SIGNAL("clicked()"), partial(self.start_move, "RIGHT"))
+        self.player_nav_menu.ui.reset_button.clicked.connect(self.reset_player)
 
         self.initialize_player_tokens()
         self.layout().addChildWidget(self.player_widget)
+        self.layout().addChildWidget(self.player_nav_menu)
     # end temp_setup()
 
-    def get_direction(self, label):
-        if (label == "UP" or label == "DOWN" or
-            label == "LEFT" or label == "RIGHT"):
-            self.player_widget.direction_to_move = label
+    def start_move(self, label):
+        try:
+            if (label == "UP" or label == "DOWN" or
+                label == "LEFT" or label == "RIGHT"):
+                self.player_widget.direction_to_move = label
 
-        else:
-            raise NameError("Invalid Direction Received")
+                self.dice_amount = int(self.player_nav_menu.ui.dice_field.toPlainText())
+                self.move_player = True
+                self.player_widget.turn_status = self.move_player
+
+                # Manually calls a the paint QEvent.
+                self.update()
+
+        except ValueError:
+            print("[ERROR] Invalid dice roll amount!")
+
     # end get_direction()
 
     def initialize_player_tokens(self):
         # TODO: Temp. one player for proof-of-concept
+
         self.player_widget = player_token.PlayerToken("John")
         self.player_widget.board_tile_height = self.board_tile_height
         self.player_widget.board_tile_width  = self.board_tile_width
@@ -233,6 +240,7 @@ class Board(QMainWindow):
         """
         if (row == 4 and col == 4):
             return True
+    # end is_hub_tile()
 
     def is_cake_tile(self, row, col):
         """
@@ -248,6 +256,7 @@ class Board(QMainWindow):
         if ((row == 0 and col == 4) or (row == 4 and col == 0) or
             (row == 4 and col == 8) or (row == 8 and col ==4)):
             return True
+    # end is_cake_tile()
 
     def get_tile_type(self, row, col):
         """
@@ -275,6 +284,7 @@ class Board(QMainWindow):
             return "roll_again"
         else:
             return "Invalid"
+    # end get_tile_type()
 
     def paintEvent(self, event):
         """
@@ -287,7 +297,15 @@ class Board(QMainWindow):
          (1) event: The event signal (QEvent.Type.Paint).
         """
         self.draw_board()
+        self.move_player_token()
+    # end paintEvent()
 
+    def move_player_token(self):
+        """
+         Description
+        -------------
+         TODO: JGC
+        """
         if not self.players_initialized:
             self.player_widget.update()
             self.players_initialized = True
@@ -299,7 +317,8 @@ class Board(QMainWindow):
             self.player_widget.update()
             self.move_player = False
         # end if
-    # end paintEvent()
+    # end move_player_token()
+
 
     def draw_board(self):
         """

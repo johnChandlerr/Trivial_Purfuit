@@ -2,28 +2,13 @@
 
 import sys
 
-from PySide2.QtWidgets import (QApplication, QMainWindow, QDialog)
-from PySide2.QtCore import (SIGNAL, QUrl)
-from PySide2.QtGui import (QPainter, QPen, QBrush)
-from PySide2.QtQml import QQmlApplicationEngine
+from PySide2.QtWidgets import (QApplication, QMainWindow)
+from PySide2.QtCore import (SIGNAL)
 
 from Trivial_Purfuit.src.board.the_board import Board
-from Trivial_Purfuit.src.MainWindow.menus.ui_start_menu import Ui_StartMenuDialog
+from Trivial_Purfuit.src.MainWindow.menus.start_menu import StartMenu
 from Trivial_Purfuit.src.MainWindow.menus.setup_menu import SetupMenu
 from Trivial_Purfuit.src.MainWindow.ui_mainwindow import Ui_MainWindow
-
-
-class StartMenu(QDialog):
-    """
-     Description
-    -------------
-        TODO - Put this in it's own file.
-    """
-    def __init__(self):
-        super(StartMenu, self).__init__()
-        self.ui = Ui_StartMenuDialog()
-        self.ui.setupUi(self)
-# end class StartMenu
 
 
 class MainWindow(QMainWindow):
@@ -67,12 +52,15 @@ class MainWindow(QMainWindow):
         """
         try:
             self.number_players = int(self.setup_menu.ui.players_text_edit.toPlainText())
-            print(self.number_players)
+            self.board.update_total_players(self.number_players)
+
             self.setup_menu.hide()
+            self.board.initialize_game()
             self.board.show()
+
         except ValueError:
             print("[ERROR] Invalid input! Must be (1, 2, 3, or 4)!")
-    # end setup_game()
+    # end start_game()
 
     def close_game(self):
         """
