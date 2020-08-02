@@ -10,7 +10,7 @@ class Die(QWidget):
 
         super().__init__()
 
-        self.width = 100
+        self.width = 75
         self.height = self.width
         self.x = 0
         self.y = 0
@@ -35,10 +35,10 @@ class Die(QWidget):
 
     def draw_dice_fun(self):
         painter = QPainter(self)
-        self.x = self.board_tile_width * 5 - self.width
-        self.y = self.board_tile_height * 5 - self.height
+        self.x = self.board_tile_width * 6
+        self.y = self.board_tile_height * 2
         # initial dice
-        painter.drawImage(QRect(self.x + 150, self.y - 150, self.width, self.height),
+        painter.drawImage(QRect(self.x, self.y, self.width, self.height),
                           QImage("./dice-six-faces-six.png"))
 
         if not self.dice_initialized:
@@ -46,22 +46,22 @@ class Die(QWidget):
             self.y = self.board_tile_height * 5 - self.height
             self.dice_initialized = True
         elif self.dice_amount == 1:
-            painter.drawImage(QRect(self.x + 150, self.y - 150, self.width, self.height),
+            painter.drawImage(QRect(self.x, self.y, self.width, self.height),
                               QImage("./dice-six-faces-one.png"))
         elif self.dice_amount == 2:
-            painter.drawImage(QRect(self.x + 150, self.y - 150, self.width, self.height),
+            painter.drawImage(QRect(self.x, self.y, self.width, self.height),
                               QImage("./dice-six-faces-two.png"))
         elif self.dice_amount == 3:
-            painter.drawImage(QRect(self.x + 150, self.y - 150, self.width, self.height),
+            painter.drawImage(QRect(self.x, self.y, self.width, self.height),
                               QImage("./dice-six-faces-three.png"))
         elif self.dice_amount == 4:
-            painter.drawImage(QRect(self.x + 150, self.y - 150, self.width, self.height),
+            painter.drawImage(QRect(self.x, self.y, self.width, self.height),
                               QImage("./dice-six-faces-four.png"))
         elif self.dice_amount == 5:
-            painter.drawImage(QRect(self.x + 150, self.y - 150, self.width, self.height),
+            painter.drawImage(QRect(self.x, self.y, self.width, self.height),
                               QImage("./dice-six-faces-five.png"))
         elif self.dice_amount == 6:
-            painter.drawImage(QRect(self.x + 150, self.y - 150, self.width, self.height),
+            painter.drawImage(QRect(self.x, self.y, self.width, self.height),
                               QImage("./dice-six-faces-six.png"))
         # end if
         print("Dice: ", self.dice_amount)
