@@ -112,13 +112,17 @@ class Board(QMainWindow):
         self.board_menu.ui.left_button.setVisible(True)
         self.board_menu.ui.right_button.setVisible(True)
 
-        if self.get_tile_type(player_row + 1, player_col) == "Invalid":
+        if self.get_tile_type(player_row + 1, player_col) == "Invalid"\
+            or self.player_widget.direction_to_move == "UP":
             self.board_menu.ui.down_button.setVisible(False)
-        if self.get_tile_type(player_row - 1, player_col) == "Invalid":
+        if self.get_tile_type(player_row - 1, player_col) == "Invalid"\
+            or self.player_widget.direction_to_move =="DOWN":
             self.board_menu.ui.up_button.setVisible(False)
-        if self.get_tile_type(player_row, player_col - 1) == "Invalid":
+        if self.get_tile_type(player_row, player_col - 1) == "Invalid"\
+            or self.player_widget.direction_to_move == "RIGHT":
             self.board_menu.ui.left_button.setVisible(False)
-        if self.get_tile_type(player_row, player_col + 1) == "Invalid":
+        if self.get_tile_type(player_row, player_col + 1) == "Invalid"\
+            or self.player_widget.direction_to_move == "LEFT":
             self.board_menu.ui.right_button.setVisible(False)
 
 
@@ -129,6 +133,7 @@ class Board(QMainWindow):
          - TODO: JGC
         """
         self.player_widget.moves_left = self.die.roll()
+        self.player_widget.direction_to_move = "NONE"
         self.board_menu.ui.dice_field.clear()
         self.board_menu.ui.dice_field.insertPlainText(str(self.player_widget.moves_left))
         self.update_dirs()
