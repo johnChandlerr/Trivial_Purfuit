@@ -98,7 +98,34 @@ class Board(QMainWindow, board_funcs):
         self.layout().addChildWidget(self.player_widget)
         self.layout().addChildWidget(self.die)
         self.layout().addChildWidget(self.board_menu)
+
     # end temp_setup()
+    def update_dirs(self):
+        """
+        Hides the movement buttons based on whether or not its a valid move
+        Input:
+        Output:
+        """
+        player_row = self.player_widget.location[0]
+        player_col = self.player_widget.location[1]
+        self.board_menu.ui.down_button.setVisible(True)
+        self.board_menu.ui.up_button.setVisible(True)
+        self.board_menu.ui.left_button.setVisible(True)
+        self.board_menu.ui.right_button.setVisible(True)
+
+        if self.get_tile_type(player_row + 1, player_col) == "Invalid"\
+            or self.player_widget.direction_to_move == "UP":
+            self.board_menu.ui.down_button.setVisible(False)
+        if self.get_tile_type(player_row - 1, player_col) == "Invalid"\
+            or self.player_widget.direction_to_move =="DOWN":
+            self.board_menu.ui.up_button.setVisible(False)
+        if self.get_tile_type(player_row, player_col - 1) == "Invalid"\
+            or self.player_widget.direction_to_move == "RIGHT":
+            self.board_menu.ui.left_button.setVisible(False)
+        if self.get_tile_type(player_row, player_col + 1) == "Invalid"\
+            or self.player_widget.direction_to_move == "LEFT":
+            self.board_menu.ui.right_button.setVisible(False)
+
 
     def get_dice_value(self):
         """
@@ -107,6 +134,7 @@ class Board(QMainWindow, board_funcs):
          - TODO: JGC
         """
         self.player_widget.moves_left = self.die.roll()
+        self.player_widget.direction_to_move = "NONE"
         self.board_menu.ui.dice_field.clear()
         self.board_menu.ui.dice_field.insertPlainText(str(self.player_widget.moves_left))
 
@@ -167,6 +195,7 @@ class Board(QMainWindow, board_funcs):
                     self.player_widget.turn_status = True
 
                     self.player_widget.update_location()
+                    self.update_dirs()
                     self.player_widget.moves_left = self.player_widget.moves_left - 1
                     self.board_menu.ui.dice_field.clear()
                     self.board_menu.ui.dice_field.insertPlainText(str(self.player_widget.moves_left))
@@ -233,6 +262,7 @@ class Board(QMainWindow, board_funcs):
         self.player_widget.location[0] = 4
         self.player_widget.location[1] = 4
         self.board_menu.ui.dice_field.clear()
+        self.update_dirs()
         self.player_widget.update()
     # end reset_player()
 
