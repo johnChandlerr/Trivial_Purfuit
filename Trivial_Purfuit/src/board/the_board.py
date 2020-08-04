@@ -137,7 +137,7 @@ class Board(QMainWindow, board_funcs):
         self.player_widget.direction_to_move = "NONE"
         self.board_menu.ui.dice_field.clear()
         self.board_menu.ui.dice_field.insertPlainText(str(self.player_widget.moves_left))
-
+        #self.update_dirs()
         if self.player_widget.moves_left == 6:
             answer, valid_input = QInputDialog.getText(self, "Select Cake Headquarters", "Enter cake color to land on")
             #answer = str(answer).lower()
@@ -195,7 +195,7 @@ class Board(QMainWindow, board_funcs):
                     self.player_widget.turn_status = True
 
                     self.player_widget.update_location()
-                    self.update_dirs()
+                    #self.update_dirs()
                     self.player_widget.moves_left = self.player_widget.moves_left - 1
                     self.board_menu.ui.dice_field.clear()
                     self.board_menu.ui.dice_field.insertPlainText(str(self.player_widget.moves_left))
@@ -262,7 +262,7 @@ class Board(QMainWindow, board_funcs):
         self.player_widget.location[0] = 4
         self.player_widget.location[1] = 4
         self.board_menu.ui.dice_field.clear()
-        self.update_dirs()
+        #self.update_dirs()
         self.player_widget.update()
     # end reset_player()
 
