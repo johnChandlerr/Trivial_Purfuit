@@ -68,8 +68,6 @@ class Die(QWidget):
             painter.drawImage(QRect(self.x, self.y, self.width, self.height),
                               QImage(self.image_path + "dice-six-faces-six.png"))
         # end if
-
-        print("Die: dice_amount = ", self.dice_amount)
         self.draw_dice = False
 
 

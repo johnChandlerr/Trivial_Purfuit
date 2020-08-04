@@ -30,10 +30,10 @@ class PlayerToken(QWidget):
         self.purple = QColor('#9065e5')
         self.name = player_name
         self.cake_list = {
-            "people":False,
-            "event":False,
-            "place":False,
-            "holiday":False}
+            "People":False,
+            "Event":False,
+            "Location":False,
+            "Holiday":False}
         self.turn_status = False
         self.player_initialized = False
         self.draw_token = False
@@ -48,6 +48,14 @@ class PlayerToken(QWidget):
         :return: indication that cake piece has been awarded
         """
         return self.cake_list[cake_category]
+
+    def all_cake_pieces_present(self):
+        """
+        TODO: JGC
+        """
+        return (self.cake_list["People"] and self.cake_list["Event"] and
+                self.cake_list["Holiday"] and self.cake_list["Location"])
+
 
     def award_cake_piece(self, cake_category):
         """
@@ -118,25 +126,25 @@ class PlayerToken(QWidget):
         self.holiday_y_center = self.y + 21
 
         #draw people cake (default people cake piece color = blue)
-        if self.cake_list["people"]:
+        if self.cake_list["People"]:
             painter.setPen(QPen(Qt.transparent, 5, Qt.SolidLine))
             painter.setBrush(QBrush(Qt.red, Qt.SolidPattern))
             painter.drawRect(self.people_x_center,self.people_y_center,self.cake_width,self.cake_height)
 
         # draw event cake (default people cake piece color = blue)
-        if self.cake_list["event"]:
+        if self.cake_list["Event"]:
             painter.setPen(QPen(Qt.transparent, 5, Qt.SolidLine))
             painter.setBrush(QBrush(Qt.white, Qt.SolidPattern))
             painter.drawRect(self.event_x_center, self.event_y_center, self.cake_width, self.cake_height)
 
         # draw place cake (default people cake piece color = blue)
-        if self.cake_list["place"]:
+        if self.cake_list["Location"]:
             painter.setPen(QPen(Qt.transparent, 5, Qt.SolidLine))
             painter.setBrush(QBrush(Qt.blue, Qt.SolidPattern))
             painter.drawRect(self.place_x_center, self.place_y_center, self.cake_width, self.cake_height)
 
         # draw holiday cake (default people cake piece color = blue)
-        if self.cake_list["holiday"]:
+        if self.cake_list["Holiday"]:
             painter.setPen(QPen(Qt.transparent, 5, Qt.SolidLine))
             painter.setBrush(QBrush(Qt.green, Qt.SolidPattern))
             painter.drawRect(self.holiday_x_center, self.holiday_y_center, self.cake_width, self.cake_height)

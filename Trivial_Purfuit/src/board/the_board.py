@@ -3,7 +3,7 @@
 import sys
 import definitions
 
-from PySide2.QtWidgets import (QApplication, QMainWindow)
+from PySide2.QtWidgets import (QApplication, QMainWindow, QMessageBox, QInputDialog)
 from PySide2.QtGui import (QPainter, QPen, QBrush)
 from PySide2.QtCore import (Qt, SIGNAL)
 
@@ -17,11 +17,13 @@ from Trivial_Purfuit.src.qa_database.question_manager import QuestionManager
 from functools import partial
 
 
-class Board(QMainWindow):
+class Board(QMainWindow, board_funcs):
     """
      Description
     -------------
         The board for Trivial Purfuit.
+        TODO: JGC - Merge the common stuff between board_funcs and this class.
+                    There's duplicate code, but you did everything in this class first.
     """
     def __init__(self):
         super().__init__()
@@ -47,7 +49,6 @@ class Board(QMainWindow):
 
         self.players_initialized = False
         self.dice_initialized    = False
-
         self.number_of_players = 0
         self.die = Die()
         self.board_menu = BoardMenu()
@@ -108,7 +109,47 @@ class Board(QMainWindow):
         self.player_widget.moves_left = self.die.roll()
         self.board_menu.ui.dice_field.clear()
         self.board_menu.ui.dice_field.insertPlainText(str(self.player_widget.moves_left))
-        self.update()
+
+        if self.player_widget.moves_left == 6:
+            answer, valid_input = QInputDialog.getText(self, "Select Cake Headquarters", "Enter cake color to land on")
+            #answer = str(answer).lower()
+            answer = str(answer)
+
+            if answer == "People":
+                self.player_widget.location[0] = 4
+                self.player_widget.location[1] = 8
+                self.player_widget.x = self.board_tile_width * 9  - self.player_widget.width
+                self.player_widget.y = self.board_tile_height * 5 - self.player_widget.height
+
+            elif answer == "Event":
+                self.player_widget.location[0] = 8
+                self.player_widget.location[1] = 4
+                self.player_widget.x = self.board_tile_width * 5  - self.player_widget.width
+                self.player_widget.y = self.board_tile_height * 9 - self.player_widget.height
+
+            elif answer == "Location":
+                self.player_widget.location[0] = 0
+                self.player_widget.location[1] = 4
+                self.player_widget.x = self.board_tile_width * 5  - self.player_widget.width
+                self.player_widget.y = self.board_tile_height * 1 - self.player_widget.height
+
+            elif answer == "Holiday":
+                self.player_widget.location[0] = 4
+                self.player_widget.location[1] = 0
+                self.player_widget.x = self.board_tile_width * 1  - self.player_widget.width
+                self.player_widget.y = self.board_tile_height * 5 - self.player_widget.height
+
+            else:
+                print("Incorrect answer")
+
+            self.player_widget.turn_status = True
+            self.player_widget.draw_token  = True
+            self.player_widget.update()
+            self.perform_tile_action()
+            self.board_menu.ui.dice_field.clear()
+
+        # Updates the dice image to immediately reflect the correct image.
+        self.die.update()
     # end get_dice_value()
 
     def start_move(self, label):
@@ -404,15 +445,29 @@ class Board(QMainWindow):
 
         if (tile_type == "People" or tile_type == "Holiday" or
             tile_type == "Location" or tile_type == "Event"):
-            question = self.qa_manager.get_question(tile_type)
-            print("Question: ", question)
-            print("TODO - Get user input for answer")
+
+            good_answer = self.ask_question(self.player_widget, tile_type, isCake=False)
+
+            if good_answer:
+                # Verify this is a "Cake" Tile before awarding cake piece.
+                if self.is_cake_tile(self.player_widget.location[0], self.player_widget.location[1]):
+                    self.player_widget.award_cake_piece(cake_category=tile_type)
 
         elif (tile_type == "roll_again"):
-            print("TODO - Roll Again Tile Land")
+            QMessageBox.question(self, 'Congratulations!', 'Roll Again!', QMessageBox.Ok)
 
-        elif (tile_type == "hub_tile"):
-            print("TODO - Center Hub Tile Land")
+        elif (tile_type == "hub"):
+
+            # Verify the player token has all cake pieces awarded before answering the
+            # winning question, otherwise ask random question
+            if self.player_widget.all_cake_pieces_present():
+                good_answer = self.ask_question(self.player_widget, "People", isCake=False)
+
+                if good_answer:
+                    QMessageBox.question(self, 'Congratulations!', 'YOU WIN!', QMessageBox.Ok)
+                    QApplication.quit()
+            else:
+                self.ask_question(self.player_widget, "People", isCake=False)
 
         else:
             print("Invalid Tile/Question Type Received")

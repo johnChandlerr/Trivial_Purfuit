@@ -2,7 +2,7 @@
 
 import sys
 
-from PySide2.QtWidgets import (QApplication, QMainWindow)
+from PySide2.QtWidgets import (QApplication, QMainWindow, QMessageBox)
 from PySide2.QtCore import (SIGNAL)
 
 from Trivial_Purfuit.src.board.the_board import Board

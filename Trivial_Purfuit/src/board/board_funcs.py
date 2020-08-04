@@ -1,5 +1,7 @@
 import definitions
 #Assuming this is how the import will go once die class is added
+
+from PySide2.QtWidgets import (QInputDialog)
 from Trivial_Purfuit.src.die import die
 from Trivial_Purfuit.src.qa_database.question_manager import QuestionManager
 
@@ -55,16 +57,21 @@ class board_funcs:
         Using just stdin/stdout for now to show functionality
         """
         question = self.qa_manager.get_question(tile_type)
-        print(question)
-        answer = input("Type your answer: ")
-        if self.qa_manager.check_answer(question, answer):
-            print("Correct")
-            if isCake:
-                player.award_cake_piece(tile_type)
-            return True
+        answer, valid_input = QInputDialog.getText(self, tile_type + ' Question', question)
+
+        if valid_input:
+            if self.qa_manager.check_answer(question, answer):
+                print("Correct")
+                if isCake:
+                    player.award_cake_piece(tile_type)
+                return True
+            else:
+                print("Wrong")
+                return False
         else:
-            print("Wrong")
-            return False
+            print("-----------------------")
+            print("--- Input cancelled ---")
+            print("-----------------------")
 
     def tileLand(self, player):
         """
