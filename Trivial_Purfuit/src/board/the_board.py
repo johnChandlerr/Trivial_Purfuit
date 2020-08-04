@@ -38,7 +38,7 @@ class Board(QMainWindow, board_funcs):
         self.board_width  = self.num_row_tiles * self.board_tile_width
         self.board_height = self.num_col_tiles * self.board_tile_height
 
-        monitor = QApplication.desktop().geometry()
+        monitor = QApplication.desktop().screenGeometry(1)
         self.resize(monitor.width(), self.board_height)
 
         self.person_tile_color     = Qt.red
@@ -106,6 +106,7 @@ class Board(QMainWindow, board_funcs):
         Input:
         Output:
         """
+        num_dirs = 4
         player_row = self.player_widget.location[0]
         player_col = self.player_widget.location[1]
         self.board_menu.ui.down_button.setVisible(True)
@@ -126,6 +127,32 @@ class Board(QMainWindow, board_funcs):
             or self.player_widget.direction_to_move == "LEFT":
             self.board_menu.ui.right_button.setVisible(False)
 
+    def hide_dirs(self):
+        self.board_menu.ui.down_button.setVisible(False)
+        self.board_menu.ui.up_button.setVisible(False)
+        self.board_menu.ui.left_button.setVisible(False)
+        self.board_menu.ui.right_button.setVisible(False)
+
+    def avail_dirs(self):
+        """
+        Determines possible directions the player could move based on current location
+        Input: The player token who is currently moving
+        Output: List of available directions
+        """
+        player_row = self.player_widget.location[0]
+        player_col = self.player_widget.location[1]
+        directions = list()
+
+        if self.get_tile_type(player_row + 1, player_col) != "Invalid":
+            directions.append("Down")
+        if self.get_tile_type(player_row - 1, player_col) != "Invalid":
+            directions.append("Up")
+        if self.get_tile_type(player_row, player_col - 1) != "Invalid":
+            directions.append("Left")
+        if self.get_tile_type(player_row, player_col + 1) != "Invalid":
+            directions.append("Right")
+
+        return directions
 
     def get_dice_value(self):
         """
@@ -137,11 +164,16 @@ class Board(QMainWindow, board_funcs):
         self.player_widget.direction_to_move = "NONE"
         self.board_menu.ui.dice_field.clear()
         self.board_menu.ui.dice_field.insertPlainText(str(self.player_widget.moves_left))
-        #self.update_dirs()
+        self.update_dirs()
+        self.board_menu.ui.roll_die_button.setVisible(False)
         if self.player_widget.moves_left == 6:
-            answer, valid_input = QInputDialog.getText(self, "Select Cake Headquarters", "Enter cake color to land on")
+            self.hide_dirs()
+            self.board_menu.ui.roll_die_button.setVisible(True)
+            options = ["None", "People", "Event", "Location", "Holiday"]
+            answer, valid_input = QInputDialog().getItem(self, "Select Cake Headquarters", "Select:", options, 0, False)
             #answer = str(answer).lower()
-            answer = str(answer)
+            #if valid_input:
+                #answer = str(answer)
 
             if answer == "People":
                 self.player_widget.location[0] = 4
@@ -168,14 +200,13 @@ class Board(QMainWindow, board_funcs):
                 self.player_widget.y = self.board_tile_height * 5 - self.player_widget.height
 
             else:
-                print("Incorrect answer")
+                print("No Cake Piece Tile Selected, Staying Here")
 
             self.player_widget.turn_status = True
             self.player_widget.draw_token  = True
             self.player_widget.update()
             self.perform_tile_action()
             self.board_menu.ui.dice_field.clear()
-
         # Updates the dice image to immediately reflect the correct image.
         self.die.update()
     # end get_dice_value()
@@ -190,15 +221,47 @@ class Board(QMainWindow, board_funcs):
             if (label == "UP" or label == "DOWN" or
                 label == "LEFT" or label == "RIGHT"):
 
-                if (self.player_widget.moves_left > 0):
+                while (self.player_widget.moves_left > 0):
                     self.player_widget.direction_to_move = label
                     self.player_widget.turn_status = True
 
                     self.player_widget.update_location()
-                    #self.update_dirs()
+                    self.update_dirs()
                     self.player_widget.moves_left = self.player_widget.moves_left - 1
                     self.board_menu.ui.dice_field.clear()
                     self.board_menu.ui.dice_field.insertPlainText(str(self.player_widget.moves_left))
+
+                    if len(self.avail_dirs()) > 2 and self.player_widget.moves_left != 0:
+                        break
+                    else:
+                        if self.player_widget.location == [0, 0]:
+                            if self.player_widget.direction_to_move == "UP":
+                                #self.player_widget.direction_to_move = "RIGHT"
+                                label = "RIGHT"
+                            else:
+                                #self.player_widget.direction_to_move = "DOWN"
+                                label = "DOWN"
+                        elif self.player_widget.location == [0, 8]:
+                            if self.player_widget.direction_to_move == "UP":
+                                #self.player_widget.direction_to_move = "DOWN"
+                                label = "LEFT"
+                            else:
+                                #self.player_widget.direction_to_move = "LEFT"
+                                label = "DOWN"
+                        elif self.player_widget.location == [8, 0]:
+                            if self.player_widget.direction_to_move == "DOWN":
+                                #self.player_widget.direction_to_move = "RIGHT"
+                                label = "RIGHT"
+                            else:
+                                #self.player_widget.direction_to_move = "UP"
+                                label = "UP"
+                        elif self.player_widget.location == [8, 8]:
+                            if self.player_widget.direction_to_move == "DOWN":
+                                #self.player_widget.direction_to_move = "LEFT"
+                                label = "LEFT"
+                            else:
+                                #self.player_widget.direction_to_move = "UP"
+                                label = "UP"
 
                     if self.player_widget.moves_left == 0:
                         self.player_widget.done_moving = True
@@ -211,6 +274,8 @@ class Board(QMainWindow, board_funcs):
                     # question from the QA Manager.
                     # TODO: JGC - Prompt the player with a question.
                     if self.player_widget.moves_left == 0 and self.player_widget.done_moving:
+                        self.hide_dirs()
+                        self.board_menu.ui.roll_die_button.setVisible(True)
                         self.player_widget.done_moving = False
                         self.perform_tile_action()
                     # end if
@@ -262,7 +327,8 @@ class Board(QMainWindow, board_funcs):
         self.player_widget.location[0] = 4
         self.player_widget.location[1] = 4
         self.board_menu.ui.dice_field.clear()
-        #self.update_dirs()
+        self.update_dirs()
+        self.board_menu.ui.roll_die_button.setVisible(True)
         self.player_widget.update()
     # end reset_player()
 
@@ -487,17 +553,23 @@ class Board(QMainWindow, board_funcs):
             QMessageBox.question(self, 'Congratulations!', 'Roll Again!', QMessageBox.Ok)
 
         elif (tile_type == "hub"):
-
+            options = ["None", "People", "Event", "Location", "Holiday"]
             # Verify the player token has all cake pieces awarded before answering the
             # winning question, otherwise ask random question
             if self.player_widget.all_cake_pieces_present():
-                good_answer = self.ask_question(self.player_widget, "People", isCake=False)
+                answer, valid_input = QInputDialog().getItem(
+                    self, "Select Cake Headquarters", "!OTHER PLAYERS! Select the winning question category:",
+                    options, 0, False)
+                good_answer = self.ask_question(self.player_widget, answer, isCake=False)
 
                 if good_answer:
                     QMessageBox.question(self, 'Congratulations!', 'YOU WIN!', QMessageBox.Ok)
                     QApplication.quit()
             else:
-                self.ask_question(self.player_widget, "People", isCake=False)
+                answer, valid_input = QInputDialog().getItem(
+                    self, "Select Cake Headquarters", "Select the question category:",
+                    options, 0, False)
+                self.ask_question(self.player_widget, answer, isCake=False)
 
         else:
             print("Invalid Tile/Question Type Received")
