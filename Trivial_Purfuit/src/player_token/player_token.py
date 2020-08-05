@@ -8,7 +8,7 @@ class PlayerToken(QWidget):
     """
     The Player Token class to store game progress per player and interact with Board.
     """
-    def __init__(self, player_name):
+    def __init__(self, player_name, b_width, b_height, x_offset, y_offset):
         """
         Construct a PlayerToken instance for a player based on name Provided by Board and an empty cake piece Dictionary
         """
@@ -16,19 +16,21 @@ class PlayerToken(QWidget):
 
         self.width  = 35
         self.height = self.width
-        self.x = 0
-        self.y = 0
 
         self.cake_width = 13
         self.cake_height = self.cake_width
 
-        self.board_tile_width  = 0
-        self.board_tile_height = self.board_tile_width
+        self.board_tile_width  = b_width
+        self.board_tile_height = b_height
+
+        self.x = self.board_tile_width * 5  - (self.width * x_offset)
+        self.y = self.board_tile_width * 5  - (self.height * y_offset)
 
         self.moves_left = 0
 
         self.purple = QColor('#9065e5')
         self.name = player_name
+        self.is_current_player = False
         self.cake_list = {
             "People":False,
             "Event":False,
@@ -40,6 +42,7 @@ class PlayerToken(QWidget):
         self.location = [4, 4]
         self.direction_to_move = ""
         self.done_moving = False
+        self.resize(b_width, b_height)
 
     def check_cake_piece(self,cake_category):
         """
@@ -56,7 +59,6 @@ class PlayerToken(QWidget):
         return (self.cake_list["People"] and self.cake_list["Event"] and
                 self.cake_list["Holiday"] and self.cake_list["Location"])
 
-
     def award_cake_piece(self, cake_category):
         """
         Get a random question of the provided type
@@ -66,15 +68,12 @@ class PlayerToken(QWidget):
         if self.cake_list[cake_category] == False:
             self.cake_list[cake_category] = True
 
-
     def paintEvent(self, event):
         self.draw_player()
         self.draw_cakes()
     # end paintEvent()
 
-    def update_location(self):
-        direction = self.direction_to_move
-
+    def update_location(self, direction=None):
         if direction == "UP":
             self.y = self.y - self.board_tile_height
             self.location[0] = self.location[0] - 1
@@ -94,14 +93,13 @@ class PlayerToken(QWidget):
 
     def draw_player(self):
         painter = QPainter(self)
-        painter.setPen(QPen(Qt.lightGray, 5, Qt.SolidLine))
+
+        if self.is_current_player:
+            painter.setPen(QPen(Qt.yellow, 5, Qt.SolidLine))
+        else:
+            painter.setPen(QPen(Qt.lightGray, 5, Qt.SolidLine))
+
         painter.setBrush(QBrush(Qt.lightGray, Qt.SolidPattern))
-
-        if not self.player_initialized:
-            self.x = self.board_tile_width * 5  - self.width
-            self.y = self.board_tile_height * 5 - self.height
-            self.player_initialized = True
-
         painter.drawRect(self.x, self.y, self.width, self.height)
         self.draw_token = False
     # end draw_player()

@@ -68,6 +68,9 @@ class MainWindow(QMainWindow):
             self.board.initialize_game()
             self.board.show()
 
+            # TODO: JGC
+            self.board.board_menu.ui.player_order_group_box.hide()
+
         except ValueError:
             print("[ERROR] Invalid input! Must be (1, 2, 3, or 4)!")
     # end start_game()
@@ -80,9 +83,6 @@ class MainWindow(QMainWindow):
         """
         QApplication.quit()
     # end close_game()
-
-    def paintEvent(self, event):
-        print("What")
 # end class MainWindow
 
 
