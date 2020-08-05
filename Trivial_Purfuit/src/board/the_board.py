@@ -54,7 +54,7 @@ class Board(QMainWindow, board_funcs):
         self.player_list = []
         self.die = Die()
         self.board_menu = BoardMenu()
-        self.qa_manager = QuestionManager(definitions.ROOT_DIR + "/Trivial_Purfuit/csvs/test2.csv")
+        self.qa_manager = QuestionManager(definitions.ROOT_DIR + "/Trivial_Purfuit/csvs/questions-and-answers.csv")
     # end __init__()
 
     def initialize_game(self):
