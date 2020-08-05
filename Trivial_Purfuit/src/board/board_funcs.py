@@ -68,7 +68,7 @@ class board_funcs:
                     player.award_cake_piece(tile_type)
                 return True
             else:
-                QMessageBox.information(self, 'Message - pythonspot.com', 'Inorrect! correct answer was: ' + answer,
+                QMessageBox.information(self, 'Message - pythonspot.com', 'Incorrect! Correct answer was: ' + answer_string,
                                         QMessageBox.Ok, QMessageBox.Ok)
                 print("Wrong")
                 return False
