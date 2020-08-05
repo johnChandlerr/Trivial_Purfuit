@@ -2,7 +2,7 @@
 
 import sys
 
-from PySide2.QtWidgets import (QApplication, QMainWindow, QMessageBox)
+from PySide2.QtWidgets import (QApplication, QMainWindow)
 from PySide2.QtCore import (SIGNAL)
 
 from Trivial_Purfuit.src.board.the_board import Board
@@ -52,8 +52,18 @@ class MainWindow(QMainWindow):
         """
         try:
             self.number_players = int(self.setup_menu.ui.players_text_edit.toPlainText())
-            self.board.update_total_players(self.number_players)
+            #self.board.update_total_players(self.number_players)
 
+            pone_name   = self.setup_menu.ui.playerOneNameTextEdit.toPlainText()
+            ptwo_name   = self.setup_menu.ui.playerTwoNameTextEdit.toPlainText()
+            pthree_name = self.setup_menu.ui.playerThreeNameTextEdit.toPlainText()
+            pfour_name  = self.setup_menu.ui.playerFourNameTextEdit.toPlainText()
+
+            self.board.initialize_player_tokens(self.number_players,
+                                                pone_name,
+                                                ptwo_name,
+                                                pthree_name,
+                                                pfour_name)
             self.setup_menu.hide()
             self.board.initialize_game()
             self.board.show()
