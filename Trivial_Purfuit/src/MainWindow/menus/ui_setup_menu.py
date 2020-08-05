@@ -16,50 +16,66 @@ from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
 from PySide2.QtWidgets import *
 
 
-class Ui_Dialog(object):
-    def setupUi(self, Dialog):
-        if not Dialog.objectName():
-            Dialog.setObjectName(u"Dialog")
-        Dialog.resize(318, 166)
-        self.players_text_edit = QTextEdit(Dialog)
+class Ui_SetupMenuDialog(object):
+    def setupUi(self, SetupMenuDialog):
+        if not SetupMenuDialog.objectName():
+            SetupMenuDialog.setObjectName(u"SetupMenuDialog")
+        SetupMenuDialog.resize(318, 166)
+        self.players_text_edit = QTextEdit(SetupMenuDialog)
         self.players_text_edit.setObjectName(u"players_text_edit")
-        self.players_text_edit.setGeometry(QRect(0, 0, 201, 31))
-        self.default_text_edit = QTextEdit(Dialog)
-        self.default_text_edit.setObjectName(u"default_text_edit")
-        self.default_text_edit.setGeometry(QRect(0, 40, 141, 31))
-        self.default_two_text_edit = QTextEdit(Dialog)
-        self.default_two_text_edit.setObjectName(u"default_two_text_edit")
-        self.default_two_text_edit.setGeometry(QRect(0, 80, 141, 31))
-        self.start_game_button = QPushButton(Dialog)
+        self.players_text_edit.setGeometry(QRect(10, 10, 201, 31))
+        self.playerFourNameTextEdit = QTextEdit(SetupMenuDialog)
+        self.playerFourNameTextEdit.setObjectName(u"playerFourNameTextEdit")
+        self.playerFourNameTextEdit.setGeometry(QRect(170, 110, 141, 31))
+        self.playerOneNameTextEdit = QTextEdit(SetupMenuDialog)
+        self.playerOneNameTextEdit.setObjectName(u"playerOneNameTextEdit")
+        self.playerOneNameTextEdit.setGeometry(QRect(20, 70, 141, 31))
+        self.start_game_button = QPushButton(SetupMenuDialog)
         self.start_game_button.setObjectName(u"start_game_button")
         self.start_game_button.setGeometry(QRect(220, 0, 91, 24))
-        self.exit_game_button = QPushButton(Dialog)
+        self.exit_game_button = QPushButton(SetupMenuDialog)
         self.exit_game_button.setObjectName(u"exit_game_button")
         self.exit_game_button.setGeometry(QRect(220, 30, 91, 24))
+        self.playerTwoNameTextEdit = QTextEdit(SetupMenuDialog)
+        self.playerTwoNameTextEdit.setObjectName(u"playerTwoNameTextEdit")
+        self.playerTwoNameTextEdit.setGeometry(QRect(170, 70, 141, 31))
+        self.playerThreeNameTextEdit = QTextEdit(SetupMenuDialog)
+        self.playerThreeNameTextEdit.setObjectName(u"playerThreeNameTextEdit")
+        self.playerThreeNameTextEdit.setGeometry(QRect(20, 110, 141, 31))
 
-        self.retranslateUi(Dialog)
+        self.retranslateUi(SetupMenuDialog)
 
-        QMetaObject.connectSlotsByName(Dialog)
+        QMetaObject.connectSlotsByName(SetupMenuDialog)
     # setupUi
 
-    def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
-        self.players_text_edit.setHtml(QCoreApplication.translate("Dialog", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+    def retranslateUi(self, SetupMenuDialog):
+        SetupMenuDialog.setWindowTitle(QCoreApplication.translate("SetupMenuDialog", u"Dialog", None))
+        self.players_text_edit.setHtml(QCoreApplication.translate("SetupMenuDialog", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'.AppleSystemUIFont';\">Enter Number of Players [1-4]</span></p></body></html>", None))
-        self.default_text_edit.setHtml(QCoreApplication.translate("Dialog", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        self.playerFourNameTextEdit.setHtml(QCoreApplication.translate("SetupMenuDialog", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'.AppleSystemUIFont';\">Default Placeholder</span></p></body></html>", None))
-        self.default_two_text_edit.setHtml(QCoreApplication.translate("Dialog", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'.AppleSystemUIFont';\">Player Four Name</span></p></body></html>", None))
+        self.playerOneNameTextEdit.setHtml(QCoreApplication.translate("SetupMenuDialog", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'.AppleSystemUIFont';\">Default Placeholder</span></p></body></html>", None))
-        self.start_game_button.setText(QCoreApplication.translate("Dialog", u"Start Game", None))
-        self.exit_game_button.setText(QCoreApplication.translate("Dialog", u"Exit", None))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'.AppleSystemUIFont';\">Player One Name</span></p></body></html>", None))
+        self.start_game_button.setText(QCoreApplication.translate("SetupMenuDialog", u"Start Game", None))
+        self.exit_game_button.setText(QCoreApplication.translate("SetupMenuDialog", u"Exit", None))
+        self.playerTwoNameTextEdit.setHtml(QCoreApplication.translate("SetupMenuDialog", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'.AppleSystemUIFont';\">Player Two Name</span></p></body></html>", None))
+        self.playerThreeNameTextEdit.setHtml(QCoreApplication.translate("SetupMenuDialog", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'.AppleSystemUIFont';\">Player Three Name</span></p></body></html>", None))
     # retranslateUi
 
