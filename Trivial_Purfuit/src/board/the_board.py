@@ -38,7 +38,7 @@ class Board(QMainWindow, board_funcs):
         self.board_width  = self.num_row_tiles * self.board_tile_width
         self.board_height = self.num_col_tiles * self.board_tile_height
 
-        monitor = QApplication.desktop().screenGeometry(1)
+        monitor = QApplication.desktop().geometry()
         self.resize(monitor.width(), self.board_height)
 
         self.person_tile_color     = Qt.red
