@@ -6,9 +6,49 @@ from Trivial_Purfuit.src.qa_database.question_manager import QuestionManager
 class TestQuestionManager(unittest.TestCase):
 
     def testValidQuestionAndAnswer(self):
-        question_manager = QuestionManager(definitions.ROOT_DIR + "/Trivial_Purfuit/csvs/test1.csv")
-        question = question_manager.get_question("date")
-        self.assertEqual(True, question_manager.check_answer(question, "answer 3"))
+        QuestionManager(definitions.ROOT_DIR + "/Trivial_Purfuit/csvs/questions-and-answers.csv")
+
+    def testTooManyColumnsQuestionManagerConstructor(self):
+        try:
+            QuestionManager(definitions.ROOT_DIR + "/Trivial_purfuit/csvs/too-many-columns.csv")
+            self.fail("Should have failed earlier")
+        except ValueError:
+            pass
+
+    def testTooFewColumnsQuestionManagerConstructor(self):
+        try:
+            QuestionManager(definitions.ROOT_DIR + "/Trivial_purfuit/csvs/too-few-columns.csv")
+            self.fail("Should have failed earlier")
+        except ValueError:
+            pass
+
+    def testTooFewTypesQuestionManagerConstructor(self):
+        try:
+            QuestionManager(definitions.ROOT_DIR + "/Trivial_purfuit/csvs/too-few-types.csv")
+            self.fail("Should have failed earlier")
+        except ValueError:
+            pass
+
+    def testTooManyTypesQuestionManagerConstructor(self):
+        try:
+            QuestionManager(definitions.ROOT_DIR + "/Trivial_purfuit/csvs/too-many-types.csv")
+            self.fail("Should have failed earlier")
+        except ValueError:
+            pass
+
+    def testIncorrectHeadersQuestionManagerConstructor(self):
+        try:
+            QuestionManager(definitions.ROOT_DIR + "/Trivial_purfuit/csvs/incorrect-headers.csv")
+            self.fail("Should have failed earlier")
+        except KeyError:
+            pass
+
+    def testIncorrectQuestionTypesQuestionManagerConstructor(self):
+        try:
+            QuestionManager(definitions.ROOT_DIR + "/Trivial_purfuit/csvs/incorrect-question-types.csv")
+            self.fail("Should have failed earlier")
+        except ValueError:
+            pass
 
 
 if __name__ == '__main__':
