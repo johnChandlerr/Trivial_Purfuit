@@ -26,6 +26,9 @@ class PlayerToken(QWidget):
         self.x = self.board_tile_width * 5  - (self.width * x_offset)
         self.y = self.board_tile_width * 5  - (self.height * y_offset)
 
+        self.x_offset = x_offset
+        self.y_offset = y_offset
+
         self.moves_left = 0
 
         self.purple = QColor('#9065e5')

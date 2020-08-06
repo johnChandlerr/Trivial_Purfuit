@@ -114,26 +114,26 @@ class Board(QMainWindow, board_funcs):
             if answer == "People":
                 self.current_player.location[0] = 4
                 self.current_player.location[1] = 8
-                self.current_player.x = self.board_tile_width * 9  - self.current_player.width
-                self.current_player.y = self.board_tile_height * 5 - self.current_player.height
+                self.current_player.x = self.board_tile_width * 9  - (self.current_player.width * self.current_player.x_offset)
+                self.current_player.y = self.board_tile_height * 5 - (self.current_player.height * self.current_player.y_offset)
 
             elif answer == "Event":
                 self.current_player.location[0] = 8
                 self.current_player.location[1] = 4
-                self.current_player.x = self.board_tile_width * 5  - self.current_player.width
-                self.current_player.y = self.board_tile_height * 9 - self.current_player.height
+                self.current_player.x = self.board_tile_width * 5  - (self.current_player.width * self.current_player.x_offset)
+                self.current_player.y = self.board_tile_height * 9 - (self.current_player.height * self.current_player.y_offset)
 
             elif answer == "Location":
                 self.current_player.location[0] = 0
                 self.current_player.location[1] = 4
-                self.current_player.x = self.board_tile_width * 5  - self.current_player.width
-                self.current_player.y = self.board_tile_height * 1 - self.current_player.height
+                self.current_player.x = self.board_tile_width * 5  - (self.current_player.width * self.current_player.x_offset)
+                self.current_player.y = self.board_tile_height * 1 - (self.current_player.height * self.current_player.y_offset)
 
             elif answer == "Holiday":
                 self.current_player.location[0] = 4
                 self.current_player.location[1] = 0
-                self.current_player.x = self.board_tile_width * 1  - self.current_player.width
-                self.current_player.y = self.board_tile_height * 5 - self.current_player.height
+                self.current_player.x = self.board_tile_width * 1  - (self.current_player.width * self.current_player.x_offset)
+                self.current_player.y = self.board_tile_height * 5 - (self.current_player.height * self.current_player.y_offset)
 
             else:
                 print("Incorrect answer")
