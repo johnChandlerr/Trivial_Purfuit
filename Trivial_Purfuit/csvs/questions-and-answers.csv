@@ -1,0 +1,23 @@
+type,question,answer
+People,Who was the main author of the Declaration of Independence?,Thomas Jefferson
+People,How many people signed the Declaration of Independence?,56
+People,Which congress adopted the Declaration of Independence?,The Second Continental Congress
+People,Which philosopher influenced the authors of the Declaration of Independence?,John Locke
+People,Who asked Thomas Jefferson to write the Declaration of Independence?,John Adams
+People,Who proposed Independence?,Richard Lee
+People,Who had the largest signature on the Declaration of Independence?,John Hancock
+Event,When did the Declaration of Independence actually pass? (use slashes for full date format),07/02/1776
+Event,When was the Declaration of Independence ratified? (use slashes for full date format),07/04/1776
+Event,When did Richard Lee propose Independence? (use slashes for full date format),06/07/1776
+Event,How many colonies voted in favor of independence?,12
+Event,When was the first public reading of the Declaration of Independence? (use slashes for full date format),07/08/1776
+Location,Where did the Second Continental Congress Meet (city state)?,Philadelphia Pennsylvania
+Location,Where is the official copy of the Declaration of Independence held today?,National Archives
+Location,Was the Declaration of Independence ever held in a state more south of Virginia? (yes or no),No
+Location,Where was the Declaration of Independence held in World War II (city state)?,Fort Knox Kentucky
+Location,How many states (including DC) was the Declaration of Independence ever held in?,7
+Holiday,What is the name of the holiday that celebrates the signing of the Declaration of Independence?,Independence Day
+Holiday,On what date is the Declaration of Independence ratification celebrated? (Month Day format),July 4
+Holiday,Is is custom to shoot fireworks on Independence Day? (yes or no),yes
+Holiday,How many of the first five US Presidents died on July 4th?,3
+Holiday,Was July 4th an official holiday as soon as the Declaration of Independence was ratified? (yes or no),no

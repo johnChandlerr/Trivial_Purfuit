@@ -1,11 +1,24 @@
 {
-    "files": ["mainwindow.py",
-              "ui_mainwindow.py",
-              "ui_start_menu.py",
-              "start_menu_wrapper.py",
-              "mainwindow.ui",
-              "start_menu.ui",
-              "player_token.py",
-              "the_board.py"
-              ]
+    "files": ["src/MainWindow/mainwindow.py",
+              "src/MainWindow/ui_mainwindow.py",
+              "src/MainWindow/mainwindow.ui",
+
+              "src/MainWindow/menus/ui_start_menu.py",
+              "src/MainWindow/menus/start_menu.py",
+              "src/MainWindow/menus/start_menu.ui",
+              "src/MainWindow/menus/setup_menu.ui",
+              "src/MainWindow/menus/ui_setup_menu.py",
+              "src/MainWindow/menus/setup_menu.py",
+
+              "src/player_token/player_token.py",
+              "src/die/die.py",
+              "src/qa_database/question_manager.py",
+
+              "src/board/the_board.py",
+              "src/board/board_funcs.py",
+
+              "src/board/menus/board_menu.ui",
+              "src/board/menus/ui_board_menu.py",
+              "src/board/menus/board_menu.py"
+             ]
 }
