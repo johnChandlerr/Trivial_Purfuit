@@ -9,6 +9,7 @@ from PySide2.QtCore import (Qt, SIGNAL)
 
 from Trivial_Purfuit.src.board.board_funcs import board_funcs
 from Trivial_Purfuit.src.board.menus.board_menu import BoardMenu
+from Trivial_Purfuit.src.MainWindow.menus.restart_menu import RestartMenu
 from Trivial_Purfuit.src.player_token.player_token import PlayerToken
 from Trivial_Purfuit.src.die.die import Die
 from Trivial_Purfuit.src.qa_database.question_manager import QuestionManager
@@ -55,6 +56,7 @@ class Board(QMainWindow, board_funcs):
         self.die = Die()
         self.board_menu = BoardMenu()
         self.qa_manager = QuestionManager(definitions.ROOT_DIR + "/Trivial_Purfuit/csvs/questions-and-answers.csv")
+        self.restart_menu = RestartMenu()
     # end __init__()
 
     def initialize_game(self):
@@ -84,7 +86,7 @@ class Board(QMainWindow, board_funcs):
         self.connect(self.board_menu.ui.down_button, SIGNAL("clicked()"), partial(self.start_move, "DOWN"))
         self.connect(self.board_menu.ui.left_button, SIGNAL("clicked()"), partial(self.start_move, "LEFT"))
         self.connect(self.board_menu.ui.right_button, SIGNAL("clicked()"), partial(self.start_move, "RIGHT"))
-        self.connect(self.board_menu.ui.reset_button, SIGNAL("clicked()"), self.reset_player)
+        self.connect(self.board_menu.ui.reset_button, SIGNAL("clicked()"), self.cheat)
         self.connect(self.board_menu.ui.roll_die_button, SIGNAL("clicked()"), self.get_dice_value)
 
         # Die Setup/initialization
@@ -237,21 +239,16 @@ class Board(QMainWindow, board_funcs):
         self.die.resize(self.board_width, self.board_height)
     # end initialize_dice()
 
-    def reset_player(self):
+    def cheat(self):
         """
          Description
         -------------
          - TODO: JGC
         """
-        self.current_player.direction_to_move = "NONE"
-        self.current_player.player_initialized = False
-        self.current_player.turn_status = False
-        self.current_player.done_moving = False
-        self.current_player.moves_left = 0
-        self.current_player.location[0] = 4
-        self.current_player.location[1] = 4
-        self.current_player.update()
-        self.board_menu.ui.dice_field.clear()
+        self.current_player.award_cake_piece(cake_category="People")
+        self.current_player.award_cake_piece(cake_category="Holiday")
+        self.current_player.award_cake_piece(cake_category="Location")
+        self.current_player.award_cake_piece(cake_category="Event")
     # end reset_player()
 
     def is_roll_again_tile(self, row, col):
@@ -480,13 +477,15 @@ class Board(QMainWindow, board_funcs):
             # winning question, otherwise ask random question
             if self.current_player.all_cake_pieces_present():
                 answer, valid_input = QInputDialog().getItem(
+
                     self, "Select Category", "!OTHER PLAYERS! Select the winning question category:",
                     options, 0, False)
                 good_answer = self.ask_question(self.current_player, answer, isCake=False)
 
                 if good_answer:
                     QMessageBox.question(self, 'Congratulations!', 'YOU WIN!', QMessageBox.Ok)
-                    QApplication.quit()
+                    self.restart_menu.show()
+                    #QApplication.quit()
             else:
                 answer, valid_input = QInputDialog().getItem(
                     self, "Select Category", "Select the question category:",
