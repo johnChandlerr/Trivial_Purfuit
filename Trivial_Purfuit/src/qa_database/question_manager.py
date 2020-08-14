@@ -2,8 +2,7 @@ import pandas
 import random
 import math
 
-# The allowed types of questions
-QUESTION_TYPES = ["People", "Location", "Event", "Holiday"]
+import definitions
 
 
 class QuestionManager:
@@ -33,11 +32,12 @@ class QuestionManager:
         if len(self.type_question_dict) != 4:
             raise ValueError("the file: " + csv_file_name + " does not have the correct number of types (4)")
 
-        for key in self.type_question_dict:
-            if key not in QUESTION_TYPES:
-                raise ValueError(
-                    "the file: " + csv_file_name + " does not have the correct question types (people, location, "
-                                                   "event, holiday")
+        # Set the question type variables in definitions.py
+        question_types = list(self.type_question_dict.keys())
+        definitions.question_type1 = question_types[0]
+        definitions.question_type1 = question_types[1]
+        definitions.question_type1 = question_types[2]
+        definitions.question_type1 = question_types[3]
 
         self.question_answer_dict = pandas.Series(question_answer_df.answer.values,
                                                   index=question_answer_df.question).to_dict()

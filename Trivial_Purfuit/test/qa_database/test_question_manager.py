@@ -43,12 +43,8 @@ class TestQuestionManager(unittest.TestCase):
         except KeyError:
             pass
 
-    def testIncorrectQuestionTypesQuestionManagerConstructor(self):
-        try:
-            QuestionManager(definitions.ROOT_DIR + "/Trivial_purfuit/csvs/incorrect-question-types.csv")
-            self.fail("Should have failed earlier")
-        except ValueError:
-            pass
+    def testDifferentQuestionTypesQuestionManagerConstructor(self):
+        QuestionManager(definitions.ROOT_DIR + "/Trivial_purfuit/csvs/different-question-types.csv")
 
 
 if __name__ == '__main__':
