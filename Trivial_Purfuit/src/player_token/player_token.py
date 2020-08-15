@@ -1,8 +1,11 @@
 
-from PySide2.QtWidgets import (QWidget, QApplication, QMainWindow, QVBoxLayout)
-from PySide2.QtWidgets import (QPushButton, QTextEdit)
-from PySide2.QtGui import (QPainter, QPen, QBrush, QColor)
-from PySide2.QtCore import (Qt, QRect)
+import definitions
+
+from PySide2.QtWidgets import (QWidget)
+from PySide2.QtGui import (QPainter, QPen, QBrush)
+from PySide2.QtCore import (Qt, QUrl)
+from PySide2.QtMultimedia import (QMediaPlayer)
+
 
 class PlayerToken(QWidget):
     """
@@ -31,7 +34,6 @@ class PlayerToken(QWidget):
 
         self.moves_left = 0
 
-        self.purple = QColor('#9065e5')
         self.name = player_name
         self.is_current_player = False
         self.cake_list = {
@@ -46,6 +48,9 @@ class PlayerToken(QWidget):
         self.direction_to_move = ""
         self.done_moving = False
         self.resize(b_width, b_height)
+        self.audio_player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
+        self.audio_player.setMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/player_move.m4a"))
+    # end __init__()
 
     def check_cake_piece(self,cake_category):
         """

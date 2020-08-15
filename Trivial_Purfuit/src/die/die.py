@@ -1,8 +1,7 @@
 import sys, random, definitions
 from PySide2.QtWidgets import (QApplication, QWidget)
 from PySide2.QtGui import (QPainter, QImage)
-from PySide2.QtCore import (QRect)
-from PySide2.QtCore import (QUrl)
+from PySide2.QtCore import (QRect, QUrl)
 from PySide2.QtMultimedia import (QMediaPlayer)
 
 class Die(QWidget):

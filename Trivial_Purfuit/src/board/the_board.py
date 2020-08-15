@@ -155,6 +155,9 @@ class Board(QMainWindow, board_funcs):
          - TODO: JGC
         """
         try:
+            # TODO: Could add a check to restart for those too impatient.
+            self.current_player.audio_player.play()
+
             if (label == "UP" or label == "DOWN" or
                 label == "LEFT" or label == "RIGHT"):
 
