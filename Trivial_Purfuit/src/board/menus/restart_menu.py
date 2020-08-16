@@ -1,7 +1,7 @@
 # This Python file uses the following encoding: utf-8
 
 from PySide2.QtWidgets import (QDialog)
-from Trivial_Purfuit.src.MainWindow.menus.ui_restart_menu import Ui_RestartMenuDialog
+from Trivial_Purfuit.src.board.menus.ui_restart_menu import Ui_RestartMenuDialog
 
 
 class RestartMenu(QDialog):

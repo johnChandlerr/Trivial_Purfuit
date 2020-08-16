@@ -9,7 +9,7 @@ from PySide2.QtCore import (Qt, SIGNAL)
 
 from Trivial_Purfuit.src.board.board_funcs import board_funcs
 from Trivial_Purfuit.src.board.menus.board_menu import BoardMenu
-from Trivial_Purfuit.src.MainWindow.menus.restart_menu import RestartMenu
+from Trivial_Purfuit.src.board.menus.restart_menu import RestartMenu
 from Trivial_Purfuit.src.player_token.player_token import PlayerToken
 from Trivial_Purfuit.src.die.die import Die
 from Trivial_Purfuit.src.qa_database.question_manager import QuestionManager
