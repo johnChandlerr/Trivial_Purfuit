@@ -575,7 +575,7 @@ class Board(QMainWindow, board_funcs):
 
                 elif self.is_hub_tile(row, col):
                     painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
-                                  QImage(self.image_path + "win.png"))
+                                      QImage(self.image_path + "win.png"))
 
                 # end if
 
