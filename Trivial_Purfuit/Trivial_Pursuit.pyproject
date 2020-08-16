@@ -19,6 +19,10 @@
 
               "src/board/menus/board_menu.ui",
               "src/board/menus/ui_board_menu.py",
-              "src/board/menus/board_menu.py"
+              "src/board/menus/board_menu.py",
+
+              "src/board/menus/restart_menu.ui",
+              "src/board/menus/ui_restart_menu.py",
+              "src/board/menus/restart_menu.py"
              ]
 }
