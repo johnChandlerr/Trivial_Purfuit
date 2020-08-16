@@ -4,8 +4,8 @@ import sys
 import definitions
 
 from PySide2.QtWidgets import (QApplication, QMainWindow, QMessageBox, QInputDialog)
-from PySide2.QtGui import (QPainter, QPen, QBrush)
-from PySide2.QtCore import (Qt, SIGNAL)
+from PySide2.QtGui import (QPainter, QPen, QBrush, QImage)
+from PySide2.QtCore import (Qt, SIGNAL, QRect)
 
 from Trivial_Purfuit.src.board.board_funcs import board_funcs
 from Trivial_Purfuit.src.board.menus.board_menu import BoardMenu
@@ -55,6 +55,7 @@ class Board(QMainWindow, board_funcs):
         self.die = Die()
         self.board_menu = BoardMenu()
         self.qa_manager = QuestionManager(definitions.ROOT_DIR + "/Trivial_Purfuit/csvs/questions-and-answers.csv")
+        self.image_path = definitions.ROOT_DIR + "/Trivial_Purfuit/src/board/images/"
     # end __init__()
 
     def initialize_game(self):
@@ -541,22 +542,41 @@ class Board(QMainWindow, board_funcs):
                 if self.is_roll_again_tile(row, col):
                     painter.setBrush(QBrush(self.roll_again_tile_color, Qt.SolidPattern))
                     painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                    painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
+                                      QImage(self.image_path + "roll_again.png"))
 
                 elif self.is_person_tile(row, col):
                     painter.setBrush(QBrush(self.person_tile_color, Qt.SolidPattern))
                     painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                    if self.is_cake_tile(row, col):
+                        painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
+                                          QImage(self.image_path + "collect.png"))
 
                 elif self.is_holiday_tile(row, col):
                     painter.setBrush(QBrush(self.holiday_tile_color, Qt.SolidPattern))
                     painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                    if self.is_cake_tile(row, col):
+                        painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
+                                          QImage(self.image_path + "collect.png"))
 
                 elif self.is_event_tile(row, col):
                     painter.setBrush(QBrush(self.events_tile_color, Qt.SolidPattern))
                     painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                    if self.is_cake_tile(row, col):
+                        painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
+                                          QImage(self.image_path + "collect.png"))
 
                 elif self.is_place_tile(row, col):
                     painter.setBrush(QBrush(self.places_tile_color, Qt.SolidPattern))
                     painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                    if self.is_cake_tile(row, col):
+                        painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
+                                          QImage(self.image_path + "collect.png"))
+
+                elif self.is_hub_tile(row, col):
+                    painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
+                                  QImage(self.image_path + "win.png"))
+
                 # end if
 
                 # TODO: Add image for the center tile and HQ tiles
