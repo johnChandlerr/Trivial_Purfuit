@@ -3,6 +3,7 @@ import random
 import math
 
 import definitions
+from Trivial_Purfuit.src.utils.circular_queue import CircularQueue
 
 
 class QuestionManager:
@@ -26,14 +27,19 @@ class QuestionManager:
                 if type(element) != str and math.isnan(element):
                     raise ValueError("the file: " + csv_file_name + " does not have enough columns...should have (3)")
 
-        self.type_question_dict = {k: list(v) for k, v in question_answer_df.groupby("type")["question"]}
+        type_question_dict = {k: list(v) for k, v in question_answer_df.groupby("type")["question"]}
 
         # Ensure the CSV file has only 4 different question types
-        if len(self.type_question_dict) != 4:
+        if len(type_question_dict) != 4:
             raise ValueError("the file: " + csv_file_name + " does not have the correct number of types (4)")
 
+        self.type_question_dict_queue = dict()
+
+        for question_type in type_question_dict:
+            self.type_question_dict_queue[question_type] = CircularQueue(type_question_dict[question_type])
+
         # Set the question type variables in definitions.py
-        question_types = list(self.type_question_dict.keys())
+        question_types = list(self.type_question_dict_queue.keys())
         definitions.question_type1 = question_types[0]
         definitions.question_type1 = question_types[1]
         definitions.question_type1 = question_types[2]
@@ -48,8 +54,7 @@ class QuestionManager:
         :param question_type: The type of question the user wants to retrieve
         :return: A random question for the provided type
         """
-        return self.type_question_dict[question_type][
-            random.randint(0, len(self.type_question_dict[question_type]) - 1)]
+        return self.type_question_dict_queue[question_type].dequeue()
 
     def check_answer(self, question, answer):
         """
