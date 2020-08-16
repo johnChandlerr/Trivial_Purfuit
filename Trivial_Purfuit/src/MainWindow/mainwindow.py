@@ -33,7 +33,8 @@ class MainWindow(QMainWindow):
         self.connect(self.start_menu.ui.cancel_button, SIGNAL("clicked()"), self.close_game)
         self.connect(self.setup_menu.ui.start_game_button, SIGNAL("clicked()"), self.start_game)
         self.connect(self.setup_menu.ui.exit_game_button, SIGNAL("clicked()"), self.close_game)
-
+        self.connect(self.board.restart_menu.ui.leave_game_button, SIGNAL("clicked()"), self.close_game)
+        self.connect(self.board.restart_menu.ui.play_again_button, SIGNAL("clicked()"), self.restart_game)
         self.start_menu.show()
         #self.music_thread = Thread(target=self.play_background_music)
         #self.music_thread.start()
@@ -97,6 +98,13 @@ class MainWindow(QMainWindow):
         #self.music_thread.join()
         QApplication.quit()
     # end close_game()
+
+    def restart_game(self):
+        self.board = Board()
+        self.connect(self.board.restart_menu.ui.leave_game_button, SIGNAL("clicked()"), self.close_game)
+        self.connect(self.board.restart_menu.ui.play_again_button, SIGNAL("clicked()"), self.restart_game)
+        self.setup_menu.show()
+    # end restart_game
 # end class MainWindow
 
 
