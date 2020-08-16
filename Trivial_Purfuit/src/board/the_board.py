@@ -2,10 +2,12 @@
 
 import sys
 import definitions
+from functools import partial
 
 from PySide2.QtWidgets import (QApplication, QMainWindow, QMessageBox, QInputDialog)
-from PySide2.QtGui import (QPainter, QPen, QBrush)
-from PySide2.QtCore import (Qt, SIGNAL)
+from PySide2.QtGui import (QPainter, QPen, QBrush, QImage)
+from PySide2.QtCore import (Qt, SIGNAL, QUrl, QRect)
+from PySide2.QtMultimedia import (QMediaPlayer, QMediaPlaylist)
 
 from Trivial_Purfuit.src.board.board_funcs import board_funcs
 from Trivial_Purfuit.src.board.menus.board_menu import BoardMenu
@@ -13,9 +15,6 @@ from Trivial_Purfuit.src.board.menus.restart_menu import RestartMenu
 from Trivial_Purfuit.src.player_token.player_token import PlayerToken
 from Trivial_Purfuit.src.die.die import Die
 from Trivial_Purfuit.src.qa_database.question_manager import QuestionManager
-
-
-from functools import partial
 
 
 class Board(QMainWindow, board_funcs):
@@ -51,11 +50,23 @@ class Board(QMainWindow, board_funcs):
         self.players_initialized = False
         self.dice_initialized    = False
 
+        # Background music playlist
+        self.playlist = QMediaPlaylist()
+        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/circles.m4a"))
+        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/got_what_i_got.m4a"))
+        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/death_bed.m4a"))
+        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/nikes_on_my_feet.m4a"))
+        self.playlist.setPlaybackMode(QMediaPlaylist.Loop)
+
+        self.playlist_player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
+        self.playlist_player.setPlaylist(self.playlist)
+
         self.number_of_players = 0
         self.player_list = []
         self.die = Die()
         self.board_menu = BoardMenu()
         self.qa_manager = QuestionManager(definitions.ROOT_DIR + "/Trivial_Purfuit/csvs/questions-and-answers.csv")
+        self.image_path = definitions.ROOT_DIR + "/Trivial_Purfuit/src/board/images/"
         self.restart_menu = RestartMenu()
     # end __init__()
 
@@ -74,7 +85,10 @@ class Board(QMainWindow, board_funcs):
 
         temp_x = self.board_menu.ui.navigation_group.x()
         temp_y = self.board_menu.ui.navigation_group.y() + self.board_menu.ui.navigation_group.height()
+
         self.board_menu.ui.misc_group.move(temp_x, temp_y)
+        self.board_menu.ui.audio_group.move(self.board_menu.ui.misc_group.x(),
+                                            self.board_menu.ui.misc_group.y() + self.board_menu.ui.misc_group.height())
 
         # TODO: JGC - For now, we just assume player one is first..
         self.current_player            = self.player_list[0]
@@ -89,12 +103,54 @@ class Board(QMainWindow, board_funcs):
         self.connect(self.board_menu.ui.reset_button, SIGNAL("clicked()"), self.cheat)
         self.connect(self.board_menu.ui.roll_die_button, SIGNAL("clicked()"), self.get_dice_value)
 
+        # Connect signals/slots for audio slider widgets on board menu
+        self.connect(self.board_menu.ui.music_volume_slider, SIGNAL("sliderReleased()"), self.update_music_volume)
+        self.connect(self.board_menu.ui.sound_effects_volume, SIGNAL("sliderReleased()"), self.update_sound_effect_volume)
+        self.board_menu.ui.sound_effects_volume.setValue(50)
+        self.board_menu.ui.music_volume_slider.setValue(50)
+
         # Die Setup/initialization
         self.initialize_dice()
 
+        # Game sounds
+        self.win_noise = QMediaPlayer(None, QMediaPlayer.VideoSurface)
+        self.lose_noise = QMediaPlayer(None, QMediaPlayer.VideoSurface)
+        self.win_noise.setMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/win_bing.m4a"))
+        self.lose_noise.setMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/lose_noise.m4a"))
+
+        # Start the background music
+        self.playlist_player.play()
+
         self.layout().addChildWidget(self.die)
         self.layout().addChildWidget(self.board_menu)
+
     # end initialize_game()
+
+    def set_default_game_volume(self):
+        self.playlist_player.setVolume(50)
+        self.board_menu.ui.music_volume_slider.setValue(50)
+        self.board_menu.ui.music_volume_slider.setValue(50)
+    # end set_default_game_volume
+
+    def update_music_volume(self):
+        tmp_volume = self.board_menu.ui.music_volume_slider.value()
+        self.playlist_player.setVolume(tmp_volume)
+    # end update_music_volume()
+
+    def update_sound_effect_volume(self):
+        tmp_volume = self.board_menu.ui.sound_effects_volume.value()
+
+        # Set volume for lose/win effects
+        self.win_noise.setVolume(tmp_volume)
+        self.lose_noise.setVolume(tmp_volume)
+
+        # Set the volume for each player token
+        for player in self.player_list:
+            player.audio_player.setVolume(tmp_volume)
+
+        # Set the die volume
+        self.die.audio_player.setVolume(tmp_volume)
+    # end update_sound_effect_volume()
 
     def get_dice_value(self):
         """
@@ -157,6 +213,9 @@ class Board(QMainWindow, board_funcs):
          - TODO: JGC
         """
         try:
+            # TODO: Could add a check to restart for those too impatient.
+            self.current_player.audio_player.play()
+
             if (label == "UP" or label == "DOWN" or
                 label == "LEFT" or label == "RIGHT"):
 
@@ -462,12 +521,16 @@ class Board(QMainWindow, board_funcs):
             good_answer = self.ask_question(self.current_player, tile_type, isCake=False)
 
             if good_answer:
+                self.win_noise.play()
                 roll_again = True
                 # Verify this is a "Cake" Tile before awarding cake piece.
                 if self.is_cake_tile(self.current_player.location[0], self.current_player.location[1]):
                     self.current_player.award_cake_piece(cake_category=tile_type)
+            else:
+                self.lose_noise.play()
 
         elif (tile_type == "roll_again"):
+            self.win_noise.play()
             roll_again = True
             QMessageBox.question(self, 'Congratulations!', 'Roll Again!', QMessageBox.Ok)
 
@@ -483,9 +546,11 @@ class Board(QMainWindow, board_funcs):
                 good_answer = self.ask_question(self.current_player, answer, isCake=False)
 
                 if good_answer:
+                    self.win_noise.play()
                     QMessageBox.question(self, 'Congratulations!', 'YOU WIN!', QMessageBox.Ok)
                     self.restart_menu.show()
-                    #QApplication.quit()
+                else:
+                    self.lose_noise.play()
             else:
                 answer, valid_input = QInputDialog().getItem(
                     self, "Select Category", "Select the question category:",
@@ -493,6 +558,8 @@ class Board(QMainWindow, board_funcs):
                 good_answer = self.ask_question(self.current_player, answer, isCake=False)
                 if good_answer:
                     roll_again = True
+                else:
+                    self.lose_noise.play()
 
         else:
             print("Invalid Tile/Question Type Received")
@@ -540,30 +607,62 @@ class Board(QMainWindow, board_funcs):
                 if self.is_roll_again_tile(row, col):
                     painter.setBrush(QBrush(self.roll_again_tile_color, Qt.SolidPattern))
                     painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                    painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
+                                      QImage(self.image_path + "roll_again.png"))
 
                 elif self.is_person_tile(row, col):
                     painter.setBrush(QBrush(self.person_tile_color, Qt.SolidPattern))
                     painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                    if self.is_cake_tile(row, col):
+                        painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
+                                          QImage(self.image_path + "collect.png"))
 
                 elif self.is_holiday_tile(row, col):
                     painter.setBrush(QBrush(self.holiday_tile_color, Qt.SolidPattern))
                     painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                    if self.is_cake_tile(row, col):
+                        painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
+                                          QImage(self.image_path + "collect.png"))
 
                 elif self.is_event_tile(row, col):
                     painter.setBrush(QBrush(self.events_tile_color, Qt.SolidPattern))
                     painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                    if self.is_cake_tile(row, col):
+                        painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
+                                          QImage(self.image_path + "collect.png"))
 
                 elif self.is_place_tile(row, col):
                     painter.setBrush(QBrush(self.places_tile_color, Qt.SolidPattern))
                     painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
+                    if self.is_cake_tile(row, col):
+                        painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
+                                          QImage(self.image_path + "collect.png"))
+
+                elif self.is_hub_tile(row, col):
+                    painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
+                                      QImage(self.image_path + "win.png"))
+
+                # Quadrant One
+                elif row == 1 and col == 1:
+                    painter.drawImage(QRect(self.board_tile_width, self.board_tile_height, self.board_tile_width * 3, self.board_tile_height * 3),
+                                      QImage(self.image_path + "american_flag.jpeg"))
+
+                # Quadrant Two
+                elif row == 5 and col == 1:
+                    painter.drawImage(QRect(self.board_tile_width * row, self.board_tile_height, self.board_tile_width * 3, self.board_tile_height * 3),
+                                      QImage(self.image_path + "fireworks-two.jpg"))
+
+                # Quadrant Three
+                elif row == 1 and col == 5:
+                    painter.drawImage(QRect(self.board_tile_width , self.board_tile_height * col, self.board_tile_width * 3, self.board_tile_height * 3),
+                                      QImage(self.image_path + "underwear_guy.jpeg"))
+
+                # Quadrant Four
+                elif row == 5 and col == 5:
+                    painter.drawImage(QRect(self.board_tile_width * row, self.board_tile_height * col, self.board_tile_width * 3, self.board_tile_height * 3),
+                                      QImage(self.image_path + "doi.jpg"))
                 # end if
 
-                # TODO: Add image for the center tile and HQ tiles
-                '''
-                elif self.isHQTile(row, col):
-                    tmp_painter.setBrush(QBrush(self.places_tile_color, Qt.SolidPattern))
-                    tmp_painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
-                '''
                 # Update to x-coordinate for next tile
                 x = x + self.board_tile_width
             # end for
@@ -571,8 +670,8 @@ class Board(QMainWindow, board_funcs):
             # Reset (x,y) starting coordinates for next row and columns
             y = y + self.board_tile_height
             x = 0
-
         # end for
+
         self.board_initialized = True
     # end draw_board()
 

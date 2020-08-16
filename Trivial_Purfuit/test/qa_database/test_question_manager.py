@@ -46,6 +46,17 @@ class TestQuestionManager(unittest.TestCase):
     def testDifferentQuestionTypesQuestionManagerConstructor(self):
         QuestionManager(definitions.ROOT_DIR + "/Trivial_purfuit/csvs/different-question-types.csv")
 
+    def testGettingNewQuestionEachRequest(self):
+        question_manager = QuestionManager(definitions.ROOT_DIR + "/Trivial_purfuit/csvs/test1.csv")
+        question = question_manager.get_question("location")
+        self.assertEqual(question, "question 1")
+        question = question_manager.get_question("location")
+        self.assertEqual(question, "question 2")
+        question = question_manager.get_question("location")
+        self.assertEqual(question, "question 5")
+        question = question_manager.get_question("location")
+        self.assertEqual(question, "question 1")
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -88,7 +88,7 @@
     </rect>
    </property>
    <property name="title">
-    <string>Misc.</string>
+    <string>Current Player Information</string>
    </property>
    <widget class="QPushButton" name="reset_button">
     <property name="geometry">
@@ -100,7 +100,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Reset </string>
+     <string>Cheat</string>
     </property>
    </widget>
    <widget class="QPlainTextEdit" name="dice_field">
@@ -265,6 +265,71 @@
     </property>
     <property name="text">
      <string>Player Four</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="audio_group">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>350</y>
+     <width>311</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Audio Settings</string>
+   </property>
+   <widget class="QSlider" name="music_volume_slider">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>50</y>
+      <width>160</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="music_label">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>50</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Music</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="sound_label">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>90</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Sound Effects</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="sound_effects_volume">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>90</y>
+      <width>160</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
     </property>
    </widget>
   </widget>

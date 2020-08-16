@@ -1,9 +1,12 @@
 # This Python file uses the following encoding: utf-8
 
 import sys
+import definitions
+from threading import Thread
 
 from PySide2.QtWidgets import (QApplication, QMainWindow)
-from PySide2.QtCore import (SIGNAL)
+from PySide2.QtCore import (SIGNAL, QUrl)
+from PySide2.QtMultimedia import (QMediaPlayer)
 
 from Trivial_Purfuit.src.board.the_board import Board
 from Trivial_Purfuit.src.MainWindow.menus.start_menu import StartMenu
@@ -25,7 +28,7 @@ class MainWindow(QMainWindow):
         self.board = Board()
         self.start_menu = StartMenu()
         self.setup_menu = SetupMenu()
-
+        self.media_player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.connect(self.start_menu.ui.new_game_button, SIGNAL("clicked()"), self.setup_game)
         self.connect(self.start_menu.ui.cancel_button, SIGNAL("clicked()"), self.close_game)
         self.connect(self.setup_menu.ui.start_game_button, SIGNAL("clicked()"), self.start_game)
@@ -33,7 +36,18 @@ class MainWindow(QMainWindow):
         self.connect(self.board.restart_menu.ui.leave_game_button, SIGNAL("clicked()"), self.close_game)
         self.connect(self.board.restart_menu.ui.play_again_button, SIGNAL("clicked()"), self.restart_game)
         self.start_menu.show()
+        #self.music_thread = Thread(target=self.play_background_music)
+        #self.music_thread.start()
     # end __init__()
+
+    def play_background_music(self):
+        self.media_player.setMedia(QUrl.fromLocalFile( definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/bensound-anewbeginning.mp3"))
+        self.media_player.setVolume(5)
+        self.media_player.play()
+
+        while True:
+            print("State: ", self.media_player.state())
+    # end play_background_music
 
     def setup_game(self):
         """
@@ -53,7 +67,6 @@ class MainWindow(QMainWindow):
         """
         try:
             self.number_players = int(self.setup_menu.ui.players_text_edit.toPlainText())
-            #self.board.update_total_players(self.number_players)
 
             pone_name   = self.setup_menu.ui.playerOneNameTextEdit.toPlainText()
             ptwo_name   = self.setup_menu.ui.playerTwoNameTextEdit.toPlainText()
@@ -82,6 +95,7 @@ class MainWindow(QMainWindow):
         -------------
          - Terminate the Trivial Purfuit application
         """
+        #self.music_thread.join()
         QApplication.quit()
     # end close_game()
 

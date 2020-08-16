@@ -1,7 +1,8 @@
 import sys, random, definitions
 from PySide2.QtWidgets import (QApplication, QWidget)
-from PySide2.QtGui import (QPainter, QPen, QBrush, QImage)
-from PySide2.QtCore import (Qt, QRect)
+from PySide2.QtGui import (QPainter, QImage)
+from PySide2.QtCore import (QRect, QUrl)
+from PySide2.QtMultimedia import (QMediaPlayer)
 
 class Die(QWidget):
     def __init__(self):
@@ -22,10 +23,13 @@ class Die(QWidget):
         self.draw_dice = False
 
         self.dice_amount = 0
-
+        self.audio_player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
+        self.audio_player.setMedia(QUrl.fromLocalFile( definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/dice_roll.m4a"))
+        self.audio_player.setVolume(50)
         self.image_path = definitions.ROOT_DIR + "/Trivial_Purfuit/src/die/"
 
     def roll(self):
+        self.audio_player.play()
         self.dice_amount = 1 + random.randrange(self.sides)
         return self.dice_amount
 
@@ -38,7 +42,6 @@ class Die(QWidget):
 
         self.x = self.board_tile_width * 6
         self.y = self.board_tile_height * 2
-
 
         # initial dice
         painter.drawImage(QRect(self.x, self.y, self.width, self.height),
