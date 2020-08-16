@@ -5,14 +5,9 @@ import definitions
 from functools import partial
 
 from PySide2.QtWidgets import (QApplication, QMainWindow, QMessageBox, QInputDialog)
-<<<<<<< HEAD
 from PySide2.QtGui import (QPainter, QPen, QBrush, QImage)
-from PySide2.QtCore import (Qt, SIGNAL, QRect)
-=======
-from PySide2.QtGui import (QPainter, QPen, QBrush)
-from PySide2.QtCore import (Qt, SIGNAL, QUrl)
-from PySide2.QtMultimedia import (QMediaPlayer)
->>>>>>> JGC/targetDemoFunctionality
+from PySide2.QtCore import (Qt, SIGNAL, QUrl, QRect)
+from PySide2.QtMultimedia import (QMediaPlayer, QMediaPlaylist)
 
 from Trivial_Purfuit.src.board.board_funcs import board_funcs
 from Trivial_Purfuit.src.board.menus.board_menu import BoardMenu
@@ -53,6 +48,17 @@ class Board(QMainWindow, board_funcs):
 
         self.players_initialized = False
         self.dice_initialized    = False
+
+        # Background music playlist
+        self.playlist = QMediaPlaylist()
+        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/circles.m4a"))
+        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/got_what_i_got.m4a"))
+        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/death_bed.m4a"))
+        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/nikes_on_my_feet.m4a"))
+        self.playlist.setPlaybackMode(QMediaPlaylist.Loop)
+
+        self.playlist_player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
+        self.playlist_player.setPlaylist(self.playlist)
 
         self.number_of_players = 0
         self.player_list = []
@@ -109,18 +115,24 @@ class Board(QMainWindow, board_funcs):
         self.lose_noise = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.win_noise.setMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/win_bing.m4a"))
         self.lose_noise.setMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/lose_noise.m4a"))
+
+        # Start the background music
+        self.playlist_player.play()
+
         self.layout().addChildWidget(self.die)
         self.layout().addChildWidget(self.board_menu)
+
     # end initialize_game()
 
     def set_default_game_volume(self):
+        self.playlist_player.setVolume(50)
         self.board_menu.ui.music_volume_slider.setValue(50)
         self.board_menu.ui.music_volume_slider.setValue(50)
     # end set_default_game_volume
 
     def update_music_volume(self):
-        print("Hello -- music volume")
-        print("Value: ", self.board_menu.ui.music_volume_slider.value())
+        tmp_volume = self.board_menu.ui.music_volume_slider.value()
+        self.playlist_player.setVolume(tmp_volume)
     # end update_music_volume()
 
     def update_sound_effect_volume(self):
@@ -633,14 +645,27 @@ class Board(QMainWindow, board_funcs):
                     painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
                                       QImage(self.image_path + "win.png"))
 
+                # Quadrant One
+                elif row == 1 and col == 1:
+                    painter.drawImage(QRect(self.board_tile_width, self.board_tile_height, self.board_tile_width * 3, self.board_tile_height * 3),
+                                      QImage(self.image_path + "american_flag.jpeg"))
+
+                # Quadrant Two
+                elif row == 5 and col == 1:
+                    painter.drawImage(QRect(self.board_tile_width * row, self.board_tile_height, self.board_tile_width * 3, self.board_tile_height * 3),
+                                      QImage(self.image_path + "fireworks-two.jpg"))
+
+                # Quadrant Three
+                elif row == 1 and col == 5:
+                    painter.drawImage(QRect(self.board_tile_width , self.board_tile_height * col, self.board_tile_width * 3, self.board_tile_height * 3),
+                                      QImage(self.image_path + "underwear_guy.jpeg"))
+
+                # Quadrant Four
+                elif row == 5 and col == 5:
+                    painter.drawImage(QRect(self.board_tile_width * row, self.board_tile_height * col, self.board_tile_width * 3, self.board_tile_height * 3),
+                                      QImage(self.image_path + "doi.jpg"))
                 # end if
 
-                # TODO: Add image for the center tile and HQ tiles
-                '''
-                elif self.isHQTile(row, col):
-                    tmp_painter.setBrush(QBrush(self.places_tile_color, Qt.SolidPattern))
-                    tmp_painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
-                '''
                 # Update to x-coordinate for next tile
                 x = x + self.board_tile_width
             # end for
@@ -648,8 +673,8 @@ class Board(QMainWindow, board_funcs):
             # Reset (x,y) starting coordinates for next row and columns
             y = y + self.board_tile_height
             x = 0
-
         # end for
+
         self.board_initialized = True
     # end draw_board()
 
