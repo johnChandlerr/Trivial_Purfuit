@@ -41,9 +41,9 @@ class QuestionManager:
         # Set the question type variables in definitions.py
         question_types = list(self.type_question_dict_queue.keys())
         definitions.question_type1 = question_types[0]
-        definitions.question_type1 = question_types[1]
-        definitions.question_type1 = question_types[2]
-        definitions.question_type1 = question_types[3]
+        definitions.question_type2 = question_types[1]
+        definitions.question_type3 = question_types[2]
+        definitions.question_type4 = question_types[3]
 
         self.question_answer_dict = pandas.Series(question_answer_df.answer.values,
                                                   index=question_answer_df.question).to_dict()

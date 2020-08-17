@@ -7,6 +7,9 @@ from PySide2.QtCore import (Qt, QUrl)
 from PySide2.QtMultimedia import (QMediaPlayer)
 
 
+import definitions
+
+
 class PlayerToken(QWidget):
     """
     The Player Token class to store game progress per player and interact with Board.
@@ -36,11 +39,12 @@ class PlayerToken(QWidget):
 
         self.name = player_name
         self.is_current_player = False
+        self.question_categories = [definitions.question_type1, definitions.question_type2, definitions.question_type3, definitions.question_type4]
         self.cake_list = {
-            "People":False,
-            "Event":False,
-            "Location":False,
-            "Holiday":False}
+            self.question_categories[0]:False,
+            self.question_categories[1]:False,
+            self.question_categories[2]:False,
+            self.question_categories[3]:False}
         self.turn_status = False
         self.player_initialized = False
         self.draw_token = False
@@ -64,8 +68,8 @@ class PlayerToken(QWidget):
         """
         TODO: JGC
         """
-        return (self.cake_list["People"] and self.cake_list["Event"] and
-                self.cake_list["Holiday"] and self.cake_list["Location"])
+        return (self.cake_list[self.question_categories[0]] and self.cake_list[self.question_categories[1]] and
+                self.cake_list[self.question_categories[2]] and self.cake_list[self.question_categories[3]])
 
     def award_cake_piece(self, cake_category):
         """
@@ -116,42 +120,42 @@ class PlayerToken(QWidget):
         painter = QPainter(self)
 
         #set parameters for center of cake pieces
-        self.people_x_center = self.x + 3
-        self.people_y_center = self.y + 2
+        self.qtype1_x_center = self.x + 3
+        self.qtype1_y_center = self.y + 2
 
         #set parameters for center of cake pieces
-        self.event_x_center = self.x + 19
-        self.event_y_center = self.y + 2
+        self.qtype2_x_center = self.x + 19
+        self.qtype2_y_center = self.y + 2
 
         #set parameters for center of cake pieces
-        self.place_x_center = self.x + 3
-        self.place_y_center = self.y + 21
+        self.qtype3_x_center = self.x + 3
+        self.qtype3_y_center = self.y + 21
 
         #set parameters for center of cake pieces
-        self.holiday_x_center = self.x + 19
-        self.holiday_y_center = self.y + 21
+        self.qtype4_x_center = self.x + 19
+        self.qtype4_y_center = self.y + 21
 
         #draw people cake (default people cake piece color = blue)
-        if self.cake_list["People"]:
+        if self.cake_list[self.question_categories[0]]:
             painter.setPen(QPen(Qt.transparent, 5, Qt.SolidLine))
             painter.setBrush(QBrush(Qt.red, Qt.SolidPattern))
-            painter.drawRect(self.people_x_center,self.people_y_center,self.cake_width,self.cake_height)
+            painter.drawRect(self.qtype1_x_center,self.qtype1_y_center,self.cake_width,self.cake_height)
 
         # draw event cake (default people cake piece color = blue)
-        if self.cake_list["Event"]:
+        if self.cake_list[self.question_categories[1]]:
             painter.setPen(QPen(Qt.transparent, 5, Qt.SolidLine))
             painter.setBrush(QBrush(Qt.white, Qt.SolidPattern))
-            painter.drawRect(self.event_x_center, self.event_y_center, self.cake_width, self.cake_height)
+            painter.drawRect(self.qtype2_x_center, self.qtype2_y_center, self.cake_width, self.cake_height)
 
         # draw place cake (default people cake piece color = blue)
-        if self.cake_list["Location"]:
+        if self.cake_list[self.question_categories[2]]:
             painter.setPen(QPen(Qt.transparent, 5, Qt.SolidLine))
             painter.setBrush(QBrush(Qt.blue, Qt.SolidPattern))
-            painter.drawRect(self.place_x_center, self.place_y_center, self.cake_width, self.cake_height)
+            painter.drawRect(self.qtype3_x_center, self.qtype3_y_center, self.cake_width, self.cake_height)
 
         # draw holiday cake (default people cake piece color = blue)
-        if self.cake_list["Holiday"]:
+        if self.cake_list[self.question_categories[3]]:
             painter.setPen(QPen(Qt.transparent, 5, Qt.SolidLine))
             painter.setBrush(QBrush(Qt.green, Qt.SolidPattern))
-            painter.drawRect(self.holiday_x_center, self.holiday_y_center, self.cake_width, self.cake_height)
+            painter.drawRect(self.qtype4_x_center, self.qtype4_y_center, self.cake_width, self.cake_height)
     # end draw_cakes()

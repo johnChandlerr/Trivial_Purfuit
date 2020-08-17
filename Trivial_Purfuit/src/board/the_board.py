@@ -41,10 +41,10 @@ class Board(QMainWindow, board_funcs):
         monitor = QApplication.desktop().geometry()
         self.resize(monitor.width(), self.board_height)
 
-        self.person_tile_color     = Qt.red
-        self.events_tile_color     = Qt.white
-        self.places_tile_color     = Qt.blue
-        self.holiday_tile_color    = Qt.green
+        self.qtype1_tile_color     = Qt.red
+        self.qtype2_tile_color     = Qt.white
+        self.qtype3_tile_color     = Qt.blue
+        self.qtype4_tile_color    = Qt.green
         self.roll_again_tile_color = Qt.darkGray
 
         self.players_initialized = False
@@ -66,6 +66,7 @@ class Board(QMainWindow, board_funcs):
         self.die = Die()
         self.board_menu = BoardMenu()
         self.qa_manager = QuestionManager(definitions.ROOT_DIR + "/Trivial_Purfuit/csvs/questions-and-answers.csv")
+        self.question_categories = [definitions.question_type1, definitions.question_type2, definitions.question_type3, definitions.question_type4]
         self.image_path = definitions.ROOT_DIR + "/Trivial_Purfuit/src/board/images/"
         self.restart_menu = RestartMenu()
     # end __init__()
@@ -89,12 +90,6 @@ class Board(QMainWindow, board_funcs):
         self.board_menu.ui.misc_group.move(temp_x, temp_y)
         self.board_menu.ui.audio_group.move(self.board_menu.ui.misc_group.x(),
                                             self.board_menu.ui.misc_group.y() + self.board_menu.ui.misc_group.height())
-
-        # TODO: JGC - For now, we just assume player one is first..
-        self.current_player            = self.player_list[0]
-        self.current_player_list_index = 0
-        self.current_player.is_current_player = True
-
         # Connect signals/slots for buttons on board menu
         self.connect(self.board_menu.ui.up_button, SIGNAL("clicked()"), partial(self.start_move, "UP"))
         self.connect(self.board_menu.ui.down_button, SIGNAL("clicked()"), partial(self.start_move, "DOWN"))
@@ -124,7 +119,67 @@ class Board(QMainWindow, board_funcs):
         self.layout().addChildWidget(self.die)
         self.layout().addChildWidget(self.board_menu)
 
+        self.player_list = self.set_round_order(self.player_list)
+        self.current_player = self.player_list[0]
+        self.current_player_list_index = 0
+        self.current_player.is_current_player = True
+        self.board_menu.ui.current_player_field.insertPlainText(str(self.current_player.name))
     # end initialize_game()
+
+    def hide_dirs(self):
+        self.board_menu.ui.down_button.setVisible(False)
+        self.board_menu.ui.up_button.setVisible(False)
+        self.board_menu.ui.left_button.setVisible(False)
+        self.board_menu.ui.right_button.setVisible(False)
+    #end hide_dirs
+
+    def avail_dirs(self):
+        """
+        Determines possible directions the player could move based on current location
+        Input: The player token who is currently moving
+        Output: List of available directions
+        """
+        player_row = self.current_player.location[0]
+        player_col = self.current_player.location[1]
+        directions = list()
+
+        if self.get_tile_type(player_row + 1, player_col) != "Invalid":
+            directions.append("Down")
+        if self.get_tile_type(player_row - 1, player_col) != "Invalid":
+            directions.append("Up")
+        if self.get_tile_type(player_row, player_col - 1) != "Invalid":
+            directions.append("Left")
+        if self.get_tile_type(player_row, player_col + 1) != "Invalid":
+            directions.append("Right")
+
+        return directions
+
+    def update_dirs(self):
+        """
+        Hides the movement buttons based on whether or not its a valid move
+        Input:
+        Output:
+        """
+        player_row = self.current_player.location[0]
+        player_col = self.current_player.location[1]
+        self.board_menu.ui.down_button.setVisible(True)
+        self.board_menu.ui.up_button.setVisible(True)
+        self.board_menu.ui.left_button.setVisible(True)
+        self.board_menu.ui.right_button.setVisible(True)
+
+        if self.get_tile_type(player_row + 1, player_col) == "Invalid" \
+                or self.current_player.direction_to_move == "UP":
+            self.board_menu.ui.down_button.setVisible(False)
+        if self.get_tile_type(player_row - 1, player_col) == "Invalid" \
+                or self.current_player.direction_to_move == "DOWN":
+            self.board_menu.ui.up_button.setVisible(False)
+        if self.get_tile_type(player_row, player_col - 1) == "Invalid" \
+                or self.current_player.direction_to_move == "RIGHT":
+            self.board_menu.ui.left_button.setVisible(False)
+        if self.get_tile_type(player_row, player_col + 1) == "Invalid" \
+                or self.current_player.direction_to_move == "LEFT":
+            self.board_menu.ui.right_button.setVisible(False)
+    # end update_dirs()
 
     def set_default_game_volume(self):
         self.playlist_player.setVolume(50)
@@ -165,29 +220,34 @@ class Board(QMainWindow, board_funcs):
         self.board_menu.ui.current_player_field.clear()
         self.board_menu.ui.current_player_field.insertPlainText(str(self.current_player.name))
 
-        if self.current_player.moves_left == 6:
-            options = ["None", "People", "Event", "Location", "Holiday"]
-            answer, valid_input = QInputDialog().getItem(self, "Select Cake Headquarters", "Select:", options, 0, False)
+        self.update_dirs()
+        self.board_menu.ui.roll_die_button.setVisible(False)
 
-            if answer == "People":
+        if self.current_player.moves_left == 6:
+            self.current_player.moves_left = 0
+            self.hide_dirs()
+            self.board_menu.ui.roll_die_button.setVisible(True)
+            answer, valid_input = QInputDialog().getItem(self, "Select Cake Headquarters", "Select:", self.question_categories, 0, False)
+
+            if answer == self.question_categories[0]:
                 self.current_player.location[0] = 4
                 self.current_player.location[1] = 8
                 self.current_player.x = self.board_tile_width * 9  - (self.current_player.width * self.current_player.x_offset)
                 self.current_player.y = self.board_tile_height * 5 - (self.current_player.height * self.current_player.y_offset)
 
-            elif answer == "Event":
+            elif answer == self.question_categories[1]:
                 self.current_player.location[0] = 8
                 self.current_player.location[1] = 4
                 self.current_player.x = self.board_tile_width * 5  - (self.current_player.width * self.current_player.x_offset)
                 self.current_player.y = self.board_tile_height * 9 - (self.current_player.height * self.current_player.y_offset)
 
-            elif answer == "Location":
+            elif answer == self.question_categories[2]:
                 self.current_player.location[0] = 0
                 self.current_player.location[1] = 4
                 self.current_player.x = self.board_tile_width * 5  - (self.current_player.width * self.current_player.x_offset)
                 self.current_player.y = self.board_tile_height * 1 - (self.current_player.height * self.current_player.y_offset)
 
-            elif answer == "Holiday":
+            elif answer == self.question_categories[3]:
                 self.current_player.location[0] = 4
                 self.current_player.location[1] = 0
                 self.current_player.x = self.board_tile_width * 1  - (self.current_player.width * self.current_player.x_offset)
@@ -219,14 +279,39 @@ class Board(QMainWindow, board_funcs):
             if (label == "UP" or label == "DOWN" or
                 label == "LEFT" or label == "RIGHT"):
 
-                if (self.current_player.moves_left > 0):
+                while (self.current_player.moves_left > 0):
                     self.current_player.direction_to_move = label
                     self.current_player.turn_status = True
 
                     self.current_player.update_location(direction=label)
+                    self.update_dirs()
                     self.current_player.moves_left = self.current_player.moves_left - 1
                     self.board_menu.ui.dice_field.clear()
                     self.board_menu.ui.dice_field.insertPlainText(str(self.current_player.moves_left))
+
+                    if len(self.avail_dirs()) > 2 and self.current_player.moves_left != 0:
+                        break
+                    else:
+                        if self.current_player.location == [0, 0]:
+                            if self.current_player.direction_to_move == "UP":
+                                label = "RIGHT"
+                            else:
+                                label = "DOWN"
+                        elif self.current_player.location == [0, 8]:
+                            if self.current_player.direction_to_move == "UP":
+                                label = "LEFT"
+                            else:
+                                label = "DOWN"
+                        elif self.current_player.location == [8, 0]:
+                            if self.current_player.direction_to_move == "DOWN":
+                                label = "RIGHT"
+                            else:
+                                label = "UP"
+                        elif self.current_player.location == [8, 8]:
+                            if self.current_player.direction_to_move == "DOWN":
+                                label = "LEFT"
+                            else:
+                                label = "UP"
 
                     if self.current_player.moves_left == 0:
                         self.current_player.done_moving = True
@@ -238,6 +323,9 @@ class Board(QMainWindow, board_funcs):
                     # Once the player is out of spaces to move, prompt the player with a
                     # question from the QA Manager.
                     if self.current_player.moves_left == 0 and self.current_player.done_moving:
+                        self.current_player.direction_to_move = "NONE"
+                        self.hide_dirs()
+                        self.board_menu.ui.roll_die_button.setVisible(True)
                         self.current_player.done_moving = False
                         self.perform_tile_action()
                     # end if
@@ -327,7 +415,7 @@ class Board(QMainWindow, board_funcs):
         # end if
     # end is_roll_again_tile()
 
-    def is_person_tile(self, row, col):
+    def is_qtype1_tile(self, row, col):
         """
          Description
         -------------
@@ -347,7 +435,7 @@ class Board(QMainWindow, board_funcs):
         # end if
     # end is_person_tile()
 
-    def is_event_tile(self, row, col):
+    def is_qtype2_tile(self, row, col):
         """
          Description
         -------------
@@ -368,7 +456,7 @@ class Board(QMainWindow, board_funcs):
         # end if
     # end is_event_tile()
 
-    def is_place_tile(self, row, col):
+    def is_qtype3_tile(self, row, col):
         """
          Description
         -------------
@@ -389,7 +477,7 @@ class Board(QMainWindow, board_funcs):
         # end if
     # end is_place_tile()
 
-    def is_holiday_tile(self, row, col):
+    def is_qtype4_tile(self, row, col):
         """
          Description
         -------------
@@ -454,14 +542,14 @@ class Board(QMainWindow, board_funcs):
         """
         if self.is_hub_tile(row, col):
              return "hub"
-        elif self.is_person_tile(row, col):
-            return "People"
-        elif self.is_holiday_tile(row, col):
-            return "Holiday"
-        elif self.is_place_tile(row, col):
-            return "Location"
-        elif self.is_event_tile(row, col):
-            return "Event"
+        elif self.is_qtype1_tile(row, col):
+            return self.question_categories[0]
+        elif self.is_qtype2_tile(row, col):
+            return self.question_categories[1]
+        elif self.is_qtype3_tile(row, col):
+            return self.question_categories[2]
+        elif self.is_qtype4_tile(row, col):
+            return self.question_categories[3]
         elif self.is_roll_again_tile(row, col):
             return "roll_again"
         else:
@@ -515,8 +603,7 @@ class Board(QMainWindow, board_funcs):
 
         roll_again = False
 
-        if (tile_type == "People" or tile_type == "Holiday" or
-            tile_type == "Location" or tile_type == "Event"):
+        if tile_type in self.question_categories:
 
             good_answer = self.ask_question(self.current_player, tile_type, isCake=False)
 
@@ -535,14 +622,12 @@ class Board(QMainWindow, board_funcs):
             QMessageBox.question(self, 'Congratulations!', 'Roll Again!', QMessageBox.Ok)
 
         elif (tile_type == "hub"):
-            options = ["None", "People", "Event", "Location", "Holiday"]
             # Verify the player token has all cake pieces awarded before answering the
             # winning question, otherwise ask random question
             if self.current_player.all_cake_pieces_present():
                 answer, valid_input = QInputDialog().getItem(
-
                     self, "Select Category", "!OTHER PLAYERS! Select the winning question category:",
-                    options, 0, False)
+                    self.question_categories, 0, False)
                 good_answer = self.ask_question(self.current_player, answer, isCake=False)
 
                 if good_answer:
@@ -554,7 +639,7 @@ class Board(QMainWindow, board_funcs):
             else:
                 answer, valid_input = QInputDialog().getItem(
                     self, "Select Category", "Select the question category:",
-                    options, 0, False)
+                    self.question_categories, 0, False)
                 good_answer = self.ask_question(self.current_player, answer, isCake=False)
                 if good_answer:
                     roll_again = True
@@ -610,29 +695,29 @@ class Board(QMainWindow, board_funcs):
                     painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
                                       QImage(self.image_path + "roll_again.png"))
 
-                elif self.is_person_tile(row, col):
-                    painter.setBrush(QBrush(self.person_tile_color, Qt.SolidPattern))
+                elif self.is_qtype1_tile(row, col):
+                    painter.setBrush(QBrush(self.qtype1_tile_color, Qt.SolidPattern))
                     painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
                     if self.is_cake_tile(row, col):
                         painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
                                           QImage(self.image_path + "collect.png"))
 
-                elif self.is_holiday_tile(row, col):
-                    painter.setBrush(QBrush(self.holiday_tile_color, Qt.SolidPattern))
+                elif self.is_qtype4_tile(row, col):
+                    painter.setBrush(QBrush(self.qtype4_tile_color, Qt.SolidPattern))
                     painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
                     if self.is_cake_tile(row, col):
                         painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
                                           QImage(self.image_path + "collect.png"))
 
-                elif self.is_event_tile(row, col):
-                    painter.setBrush(QBrush(self.events_tile_color, Qt.SolidPattern))
+                elif self.is_qtype2_tile(row, col):
+                    painter.setBrush(QBrush(self.qtype2_tile_color, Qt.SolidPattern))
                     painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
                     if self.is_cake_tile(row, col):
                         painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
                                           QImage(self.image_path + "collect.png"))
 
-                elif self.is_place_tile(row, col):
-                    painter.setBrush(QBrush(self.places_tile_color, Qt.SolidPattern))
+                elif self.is_qtype3_tile(row, col):
+                    painter.setBrush(QBrush(self.qtype3_tile_color, Qt.SolidPattern))
                     painter.drawRect(x, y, self.board_tile_width, self.board_tile_height)
                     if self.is_cake_tile(row, col):
                         painter.drawImage(QRect(x, y, self.board_tile_width, self.board_tile_height),
