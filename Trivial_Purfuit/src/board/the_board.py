@@ -41,10 +41,14 @@ class Board(QMainWindow, board_funcs):
         monitor = QApplication.desktop().geometry()
         self.resize(monitor.width(), self.board_height)
 
-        self.qtype1_tile_color     = Qt.red
-        self.qtype2_tile_color     = Qt.white
+        #default is event
+        self.qtype1_tile_color     = Qt.white
+        #default is holidau
+        self.qtype2_tile_color     = Qt.green
+        #default is location
         self.qtype3_tile_color     = Qt.blue
-        self.qtype4_tile_color    = Qt.green
+        #default is people
+        self.qtype4_tile_color    = Qt.red
         self.roll_again_tile_color = Qt.darkGray
 
         self.players_initialized = False

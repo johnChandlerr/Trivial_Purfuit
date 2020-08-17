@@ -138,13 +138,13 @@ class PlayerToken(QWidget):
         #draw people cake (default people cake piece color = blue)
         if self.cake_list[self.question_categories[0]]:
             painter.setPen(QPen(Qt.transparent, 5, Qt.SolidLine))
-            painter.setBrush(QBrush(Qt.red, Qt.SolidPattern))
+            painter.setBrush(QBrush(Qt.white, Qt.SolidPattern))
             painter.drawRect(self.qtype1_x_center,self.qtype1_y_center,self.cake_width,self.cake_height)
 
         # draw event cake (default people cake piece color = blue)
         if self.cake_list[self.question_categories[1]]:
             painter.setPen(QPen(Qt.transparent, 5, Qt.SolidLine))
-            painter.setBrush(QBrush(Qt.white, Qt.SolidPattern))
+            painter.setBrush(QBrush(Qt.green, Qt.SolidPattern))
             painter.drawRect(self.qtype2_x_center, self.qtype2_y_center, self.cake_width, self.cake_height)
 
         # draw place cake (default people cake piece color = blue)
@@ -156,6 +156,6 @@ class PlayerToken(QWidget):
         # draw holiday cake (default people cake piece color = blue)
         if self.cake_list[self.question_categories[3]]:
             painter.setPen(QPen(Qt.transparent, 5, Qt.SolidLine))
-            painter.setBrush(QBrush(Qt.green, Qt.SolidPattern))
+            painter.setBrush(QBrush(Qt.red, Qt.SolidPattern))
             painter.drawRect(self.qtype4_x_center, self.qtype4_y_center, self.cake_width, self.cake_height)
     # end draw_cakes()
