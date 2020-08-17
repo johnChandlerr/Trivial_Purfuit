@@ -392,10 +392,11 @@ class Board(QMainWindow, board_funcs):
         -------------
          - TODO: JGC
         """
-        self.current_player.award_cake_piece(cake_category="People")
-        self.current_player.award_cake_piece(cake_category="Holiday")
-        self.current_player.award_cake_piece(cake_category="Location")
-        self.current_player.award_cake_piece(cake_category="Event")
+        self.current_player.award_cake_piece(self.question_categories[0])
+        self.current_player.award_cake_piece(self.question_categories[1])
+        self.current_player.award_cake_piece(self.question_categories[2])
+        self.current_player.award_cake_piece(self.question_categories[3])
+        self.current_player.update()
     # end reset_player()
 
     def is_roll_again_tile(self, row, col):
