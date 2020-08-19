@@ -57,10 +57,10 @@ class Board(QMainWindow, board_funcs):
         # Background music playlist
         self.playlist = QMediaPlaylist()
 
-        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/sea_change.m4a"))
-        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/feblu.m4a"))
-        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/vals_de_rodrigues.m4a"))
-        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/escaping_time.m4a"))
+        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/sea_change.mp3"))
+        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/feblu.mp3"))
+        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/vals_de_rodrigues.mp3"))
+        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/escaping_time.mp3"))
 
 
 
@@ -118,8 +118,8 @@ class Board(QMainWindow, board_funcs):
         # Game sounds
         self.win_noise = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.lose_noise = QMediaPlayer(None, QMediaPlayer.VideoSurface)
-        self.win_noise.setMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/win_bing.m4a"))
-        self.lose_noise.setMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/lose_noise.m4a"))
+        self.win_noise.setMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/win_bing.mp3"))
+        self.lose_noise.setMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/lose_noise.mp3"))
 
         # Start the background music
         self.playlist_player.play()
