@@ -24,7 +24,7 @@ class Die(QWidget):
 
         self.dice_amount = 0
         self.audio_player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
-        self.audio_player.setMedia(QUrl.fromLocalFile( definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/dice_roll.m4a"))
+        self.audio_player.setMedia(QUrl.fromLocalFile( definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/dice_roll.mp3"))
         self.audio_player.setVolume(50)
         self.image_path = definitions.ROOT_DIR + "/Trivial_Purfuit/src/die/"
 
