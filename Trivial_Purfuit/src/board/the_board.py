@@ -52,10 +52,14 @@ class Board(QMainWindow, board_funcs):
 
         # Background music playlist
         self.playlist = QMediaPlaylist()
-        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/circles.m4a"))
-        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/got_what_i_got.m4a"))
-        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/death_bed.m4a"))
-        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/nikes_on_my_feet.m4a"))
+
+        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/sea_change.m4a"))
+        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/feblu.m4a"))
+        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/vals_de_rodrigues.m4a"))
+        self.playlist.addMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/escaping_time.m4a"))
+
+
+
         self.playlist.setPlaybackMode(QMediaPlaylist.Loop)
 
         self.playlist_player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
