@@ -81,6 +81,7 @@ class MainWindow(QMainWindow):
             self.setup_menu.hide()
             self.board.initialize_game()
             self.board.show()
+            self.board.hide_dirs()
 
             # TODO: JGC
             self.board.board_menu.ui.player_order_group_box.hide()
