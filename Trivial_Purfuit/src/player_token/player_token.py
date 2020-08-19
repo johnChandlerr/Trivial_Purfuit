@@ -53,7 +53,7 @@ class PlayerToken(QWidget):
         self.done_moving = False
         self.resize(b_width, b_height)
         self.audio_player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
-        self.audio_player.setMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/player_move.m4a"))
+        self.audio_player.setMedia(QUrl.fromLocalFile(definitions.ROOT_DIR + "/Trivial_Purfuit/resources/audio/player_move.mp3"))
     # end __init__()
 
     def check_cake_piece(self,cake_category):
